@@ -27,7 +27,7 @@ affine = tissue_labels.affine
 # print tissue_labels.dataobj
 
 # print T1w_im
-t1_data = T1w_im.get_data()
+t1_data = np.array(T1w_im.get_data())
 
 # Single array of ROI data for 1 dataset
 """t1_all = np.zeros((9,shape[0],shape[1],shape[2]), dtype=np.float32)
@@ -39,9 +39,19 @@ for i, j, k in product(xrange(shape[0]), xrange(shape[1]), xrange(shape[2])):
     # save t1 data to region type, coords
     t1_all[int(val)-1][i][j][k] = t1_data[i][j][k]"""
 
+t1_reduced_data = []
+
 # loop over regions
-for region in (range(min(tissue_data),max(tissue_data)+1)) :
-    t1_region = t1_data(tissue_data == region)
+labels = np.array(tissue_data)
+small = labels.min()
+print small
+large = labels.max()
+print large
+for region in (range(int(small)+1, int(large)+1)) :
+    t1_region = t1_data[labels == region]
     t1_region = t1_region[t1_region>0] # remove any 0 values
-    t1_avg_intensity = math.mean(t1_region)
-    t1_vol = reduce(lambda x, y: x*y, t1_region)*reduce(lambda x, y: x*y, dimensions)
+    t1_avg_intensity = np.mean(t1_region)
+    t1_vol = len(t1_region)*reduce(lambda x, y: x*y, dimensions)
+    t1_reduced_data.append([region, t1_avg_intensity, t1_vol])
+
+print t1_reduced_data
