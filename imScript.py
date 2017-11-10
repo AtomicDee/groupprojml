@@ -4,9 +4,6 @@ import numpy as np
 from PIL import Image
 from itertools import product
 
-import sys
-sys.path.insert(0, "/Users/daria/Documents/Group\ diss/Group\ Project\ Data")
-
 filenames = os.listdir("Data")
 # print filenames
 
