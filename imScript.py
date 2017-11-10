@@ -42,7 +42,7 @@ for i, j, k in product(xrange(shape[0]), xrange(shape[1]), xrange(shape[2])):
     # Find mask value aka. region type 1-9
     val = tissue_data[i][j][k]
     # save t1 data to region type, coords
-    t1_all[val-1][i][j][k] = t1_data[i][j][k]
+    t1_all[int(val)-1][i][j][k] = t1_data[i][j][k]
 
     """if tissue_data[i][j][k] == 1 :
         t1_all[1][i][j][k] = t1_data[i][j][k]
