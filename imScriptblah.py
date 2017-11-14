@@ -28,6 +28,7 @@ for x in range(len(label_names)):
     pat_code[x] = str(label_names[x][10:31])
 
 i = 0
+titles = ['Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
 while i < lim:
@@ -82,10 +83,6 @@ while i < lim:
         # save t1 data to region type, coords
         t1_all[int(val)-1][i][j][k] = t1_data[i][j][k]"""
 
-
-
-
-
     labels = np.array(tissue_data)
     small = labels.min()
     large = labels.max()
@@ -105,17 +102,17 @@ while i < lim:
         t2_avg_intensity = np.mean(t2_region)
 
         # Save all the data to a list
+
         reduced_data.append([region,t1_avg_intensity, t2_avg_intensity, vol])
 
-    df.append(pd.DataFrame(reduced_data))
+    df.append(pd.DataFrame(reduced_data, columns = titles))
 
     # print 'Reduced Data : ', reduced_data
 
     i += 1
 
-# titles = ['Patient Code', 'REMOVE', 'Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
-
 results = pd.concat(df, keys = pat_code)
+
 results.to_csv('test1.csv')
 
 print results
