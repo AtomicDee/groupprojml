@@ -5,8 +5,6 @@ from PIL import Image
 from itertools import product
 import math
 import glob
-import csv
-import pandas as pd
 
 filenames = os.listdir("Data")
 # print filenames
@@ -21,7 +19,9 @@ T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
+# print 'lim',
 i = 0
+# reduced_data = []
 
 while i < lim:
 
