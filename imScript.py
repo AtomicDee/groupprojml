@@ -5,6 +5,8 @@ from PIL import Image
 from itertools import product
 import math
 import glob
+import csv
+import pandas as pd
 
 filenames = os.listdir("Data")
 # print filenames
