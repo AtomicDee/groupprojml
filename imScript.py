@@ -74,10 +74,6 @@ while i < lim:
         # save t1 data to region type, coords
         t1_all[int(val)-1][i][j][k] = t1_data[i][j][k]"""
 
-
-
-
-
     labels = np.array(tissue_data)
     small = labels.min()
     large = labels.max()
