@@ -19,7 +19,9 @@ T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
+# print 'lim',
 i = 0
+# reduced_data = []
 
 while i < lim:
 
@@ -29,8 +31,6 @@ while i < lim:
     T2w_restore_brain_file = os.path.join( T2w_names[i])
     print ' '
     print 'Calculating for patient data: ', i+1
-
-    i += 1
 
     # Load tissue label data
     # Tissue_labels_file = os.path.join("Data", 'sub-CC00060XX03_ses-12501_drawem_tissue_labels.nii.gz')
@@ -81,8 +81,8 @@ while i < lim:
     labels = np.array(tissue_data)
     small = labels.min()
     large = labels.max()
-
     reduced_data = []
+
     for region in (range(int(small)+1, int(large)+1)) :
         # loop over regions for T1 images
         t1_region = t1_data[labels == region]
@@ -98,5 +98,6 @@ while i < lim:
 
         # Save all the data to a list
         reduced_data.append([region,t1_avg_intensity, t2_avg_intensity, vol])
-
     print 'Reduced Data : ', reduced_data
+
+    i += 1
