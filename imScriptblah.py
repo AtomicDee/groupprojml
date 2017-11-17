@@ -46,8 +46,8 @@ while i < lim:
     print 'sub_code : ', sub_code[i]
     # load current data GA info
     GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
+    GA_current.values.tolist()
     print 'GA_current', GA_current
-    GA_current.to_list()
 
     print ' '
     print 'Calculating for patient data: ', i+1
