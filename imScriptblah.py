@@ -126,3 +126,4 @@ results = pd.concat(df, keys = pat_code)
 results.to_csv('drawem_labels.csv')
 
 print results
+# https://github.com/MIRTK/DrawEM/blob/master/label_names/all_labels.csv
