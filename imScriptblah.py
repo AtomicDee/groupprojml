@@ -12,7 +12,7 @@ filenames = os.listdir("Data")
 # print filenames
 
 # Loads all the files and saves the names in a arrays corresponding to each other
-label_names = glob.glob(os.path.join("Data",'*_drawem_labels.nii.gz'))
+label_names = glob.glob(os.path.join("Data",'*_drawem_all_labels.nii.gz'))
 T1w_names = glob.glob(os.path.join("Data",'*_T1w_restore_brain.nii.gz'))
 T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 # print 'Label files', label_names
