@@ -21,6 +21,7 @@ T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 
 # Load GA data
 GA_all_data = pd.read_csv('GA.csv')
+print 'all data : ', GA_all_data
 
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
@@ -30,7 +31,7 @@ pat_code = [0]*lim
 sub_code = [0]*lim
 for x in range(len(label_names)):
     pat_code[x] = str(label_names[x][25:31])
-    sub_code[x] = str(label_names[x][4:14])
+    sub_code[x] = str(label_names[x][9:20])
 
 i = 0
 titles = ['Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
@@ -42,7 +43,7 @@ while i < lim:
     Tissue_labels_file = os.path.join(label_names[i])
     T1w_restore_brain_file = os.path.join(T1w_names[i])
     T2w_restore_brain_file = os.path.join( T2w_names[i])
-
+    print 'sub_code : ', sub_code[i]
     # load current data GA info
     GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
     print 'GA_current', GA_current
