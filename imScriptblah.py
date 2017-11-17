@@ -12,7 +12,7 @@ filenames = os.listdir("Data")
 # print filenames
 
 # Loads all the files and saves the names in a arrays corresponding to each other
-label_names = glob.glob(os.path.join("Data",'*_drawem_all_labels.nii.gz'))
+label_names = glob.glob(os.path.join("Data",'*_drawem_labels.nii.gz'))
 T1w_names = glob.glob(os.path.join("Data",'*_T1w_restore_brain.nii.gz'))
 T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 # print 'Label files', label_names
@@ -46,7 +46,7 @@ while i < lim:
     print 'sub_code : ', sub_code[i]
     # load current data GA info
     GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
-    GA_current.values.tolist()
+    GA_current = GA_current.values.tolist()
     print 'GA_current', GA_current
 
     print ' '
@@ -114,7 +114,7 @@ while i < lim:
 
         # Save all the data to a list
 
-        reduced_data.append([GA_current,region,t1_avg_intensity, t2_avg_intensity, vol])
+        reduced_data.append([GA_current[0][0],GA_current[0][1],GA_current[0][2],region,t1_avg_intensity, t2_avg_intensity, vol])
     df.append(pd.DataFrame(reduced_data, columns = titles))
 
     # print 'Reduced Data : ', reduced_data
@@ -123,6 +123,6 @@ while i < lim:
 
 results = pd.concat(df, keys = pat_code)
 
-results.to_csv('drawem_all_labels.csv')
+results.to_csv('drawem_labels.csv')
 
 print results
