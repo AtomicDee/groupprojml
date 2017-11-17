@@ -20,13 +20,14 @@ T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 # print 'T2W files', T2w_names
 
 # Load GA data
-GA_all_data = pd.from_csv('GA.csv')
+GA_all_data = pd.read_csv('GA.csv')
 
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
 
 # Sampling the patient codes and samples for data separation
 pat_code = [0]*lim
+sub_code = [0]*lim
 for x in range(len(label_names)):
     pat_code[x] = str(label_names[x][25:31])
     sub_code[x] = str(label_names[x][4:14])
