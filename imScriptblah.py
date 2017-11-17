@@ -12,7 +12,7 @@ filenames = os.listdir("Data")
 # print filenames
 
 # Loads all the files and saves the names in a arrays corresponding to each other
-label_names = glob.glob(os.path.join("Data",'*_drawem_labels.nii.gz'))
+label_names = glob.glob(os.path.join("Data",'*_drawem_all_labels.nii.gz'))
 T1w_names = glob.glob(os.path.join("Data",'*_T1w_restore_brain.nii.gz'))
 T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 # print 'Label files', label_names
@@ -34,6 +34,7 @@ for x in range(len(label_names)):
     sub_code[x] = str(label_names[x][9:20])
 
 i = 0
+step = 0
 titles = ['scan ID','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
@@ -44,10 +45,15 @@ while i < lim:
     T1w_restore_brain_file = os.path.join(T1w_names[i])
     T2w_restore_brain_file = os.path.join( T2w_names[i])
     print 'sub_code : ', sub_code[i]
+
     # load current data GA info
     GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
     GA_current = GA_current.values.tolist()
+    GA_length = len(GA_current)
     print 'GA_current', GA_current
+    if GA_length == 1 :
+        step = 0
+        print 'step : ', step
 
     print ' '
     print 'Calculating for patient data: ', i+1
@@ -113,9 +119,18 @@ while i < lim:
         t2_avg_intensity = np.mean(t2_region)
 
         # Save all the data to a list
+        reduced_data.append([GA_current[step][0],GA_current[step][1],GA_current[step][2],region,t1_avg_intensity, t2_avg_intensity, vol])
+    # Check if subject has had more than one scan, if so, increment step in order
+    # to append corresponding GA data for the further scans
+    if GA_length > 1 :
+        step += 1
+        print 'step : ', step
+    if (step+1) == GA_length :
+        step = 0
+        print 'step : ', step
 
-        reduced_data.append([GA_current[0][0],GA_current[0][1],GA_current[0][2],region,t1_avg_intensity, t2_avg_intensity, vol])
     df.append(pd.DataFrame(reduced_data, columns = titles))
+
 
     # print 'Reduced Data : ', reduced_data
 
