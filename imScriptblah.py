@@ -34,7 +34,7 @@ for x in range(len(label_names)):
     sub_code[x] = str(label_names[x][9:20])
 
 i = 0
-titles = ['Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+titles = ['scan ID','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
 while i < lim:
@@ -47,6 +47,7 @@ while i < lim:
     # load current data GA info
     GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
     print 'GA_current', GA_current
+    GA_current.to_list()
 
     print ' '
     print 'Calculating for patient data: ', i+1
@@ -113,7 +114,7 @@ while i < lim:
 
         # Save all the data to a list
 
-        reduced_data.append([region,t1_avg_intensity, t2_avg_intensity, vol])
+        reduced_data.append([GA_current,region,t1_avg_intensity, t2_avg_intensity, vol])
     df.append(pd.DataFrame(reduced_data, columns = titles))
 
     # print 'Reduced Data : ', reduced_data
