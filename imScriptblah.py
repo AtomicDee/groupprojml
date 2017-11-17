@@ -25,7 +25,7 @@ lim = len(label_names)
 # Sampling the patient codes and samples for data separation
 pat_code = [0]*lim
 for x in range(len(label_names)):
-    pat_code[x] = str(label_names[x][10:31])
+    pat_code[x] = str(label_names[x][25:31])
 
 i = 0
 titles = ['Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
@@ -104,7 +104,6 @@ while i < lim:
         # Save all the data to a list
 
         reduced_data.append([region,t1_avg_intensity, t2_avg_intensity, vol])
-
     df.append(pd.DataFrame(reduced_data, columns = titles))
 
     # print 'Reduced Data : ', reduced_data
