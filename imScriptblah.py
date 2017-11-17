@@ -25,7 +25,7 @@ lim = len(label_names)
 # Sampling the patient codes and samples for data separation
 pat_code = [0]*lim
 for x in range(len(label_names)):
-    pat_code[x] = str(label_names[x][25:31])
+    pat_code[x] = str(label_names[x][10:21])
 
 i = 0
 titles = ['Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
