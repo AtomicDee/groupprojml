@@ -44,7 +44,7 @@ while i < lim:
     T2w_restore_brain_file = os.path.join( T2w_names[i])
 
     # load current data GA info
-    GA_current = GA_all_data[GA_all_data['id'] == subcode[i]]
+    GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
     print 'GA_current', GA_current
 
     print ' '
