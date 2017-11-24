@@ -1,4 +1,5 @@
 import os
+import sys
 import nibabel as nib
 import numpy as np
 from PIL import Image
@@ -8,16 +9,12 @@ import glob
 import csv
 import pandas as pd
 
-filenames = os.listdir("Data")
-# print filenames
+filenames = os.listdir("/Users/daria/Documents/Group diss/Group Project Data/Data")
 
 # Loads all the files and saves the names in a arrays corresponding to each other
-label_names = glob.glob(os.path.join("Data",'*_drawem_all_labels.nii.gz'))
-T1w_names = glob.glob(os.path.join("Data",'*_T1w_restore_brain.nii.gz'))
-T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
-# print 'Label files', label_names
-# print 'T1W files', T1w_names
-# print 'T2W files', T2w_names
+label_names = glob.glob(os.path.join("/Users/daria/Documents/Group diss/Group Project Data/Data",'*_drawem_all_labels.nii.gz'))
+T1w_names = glob.glob(os.path.join("/Users/daria/Documents/Group diss/Group Project Data/Data",'*_T1w_restore.nii.gz'))
+T2w_names = glob.glob(os.path.join("/Users/daria/Documents/Group diss/Group Project Data/Data",'*_T2w_restore.nii.gz'))
 
 # scan_id = label_names[1][9:20]
 # session_code = label_names[1][25:31]
@@ -34,8 +31,10 @@ lim = len(label_names)
 pat_code = [0]*lim
 sub_code = [0]*lim
 for x in range(len(label_names)):
-    pat_code[x] = str(label_names[x][25:31])
-    sub_code[x] = str(label_names[x][9:20])
+    sep = label_names[x].split("_")
+    l = len(sep[0])
+    pat_code[x] = sep[0][l-11:l]
+    sub_code[x] = sep[1][4:]
 
 i = 0
 step = 0
@@ -43,6 +42,7 @@ titles = ['scan ID','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Avera
 df = []
 
 while i < lim:
+    i+=1
     # Splits the name of the current dataset through the '_'s.
     # This is to prevent data being misaligned for patients with multiple scans.
     sep = label_names[i].split("_")
@@ -50,23 +50,22 @@ while i < lim:
 
     # loads corresponding data one sequentially
     Tissue_labels_file = os.path.join(label_names[i])
-    T1w_restore_brain_file = os.path.join(sep[0] + '_' + sep[1] + '_T1w_restore_brain.nii.gz')
-    T2w_restore_brain_file = os.path.join(sep[0] + '_' + sep[1] + '_T2w_restore_brain.nii.gz')
+    T1w_restore_brain_file = os.path.join(sep[0] + '_' + sep[1] + '_T1w_restore.nii.gz')
+    T2w_restore_brain_file = os.path.join(sep[0] + '_' + sep[1] + '_T2w_restore.nii.gz')
     # T1w_restore_brain_file = os.path.join(T1w_names[i])
     # T2w_restore_brain_file = os.path.join( T2w_names[i])
+    print ' '
+    print 'Calculating for patient data: ', i
     print 'sub_code : ', sub_code[i]
 
     # load current data GA info
-    GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
+    GA_current = GA_all_data[GA_all_data['id'] == pat_code[i]]
     GA_current = GA_current.values.tolist()
     GA_length = len(GA_current)
     print 'GA_current', GA_current
     if GA_length == 1 :
         step = 0
         print 'step : ', step
-
-    print ' '
-    print 'Calculating for patient data: ', i+1
 
     # Load tissue label data
     # Tissue_labels_file = os.path.join("Data", 'sub-CC00060XX03_ses-12501_drawem_tissue_labels.nii.gz')
@@ -172,11 +171,11 @@ while i < lim:
 
     # print 'Reduced Data : ', reduced_data
 
-    i += 1
+    # i += 1
 
 results = pd.concat(df, keys = pat_code)
 
-results.to_csv('drawem_labels.csv')
+results.to_csv('drawem_labels_all_data.csv')
 
 print results
 # https://github.com/MIRTK/DrawEM/blob/master/label_names/all_labels.csv
