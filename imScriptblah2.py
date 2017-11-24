@@ -21,7 +21,7 @@ T2w_names = glob.glob(os.path.join("/Users/daria/Documents/Group diss/Group Proj
 # print scan_id, session_code
 
 # Load GA data
-GA_all_data = pd.read_csv('GA.csv')
+GA_all_data = pd.read_csv('Datainfo.csv')
 print 'all data : ', GA_all_data
 
 # Setting a limit to the number of iterations based on the number of patients
@@ -38,7 +38,7 @@ for x in range(len(label_names)):
 
 i = 0
 step = 0
-titles = ['scan ID','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+titles = ['scan ID','Gender','Birth Age','Scan Age','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
 while i < lim:
@@ -63,7 +63,7 @@ while i < lim:
     GA_current = GA_current.values.tolist()
     GA_length = len(GA_current)
     print 'GA_current', GA_current
-    if GA_length == 1 :
+    if GA_length < 2 :
         step = 0
         print 'step : ', step
 
@@ -156,15 +156,20 @@ while i < lim:
         else:
             t2_region = t2_avg_intensity = '__Data__Missing__'
         # Save all the data to a list
-        reduced_data.append([GA_current[step][0],GA_current[step][1],GA_current[step][2],region,t1_avg_intensity, t2_avg_intensity, vol])
+        if len(GA_current[step]) == 4 :
+            reduced_data.append([GA_current[step][0],GA_current[step][1],GA_current[step][2], GA_current[step][3],region,t1_avg_intensity, t2_avg_intensity, vol])
     # Check if subject has had more than one scan, if so, increment step in order
     # to append corresponding GA data for the further scans
     if GA_length > 1 :
         step += 1
-        print 'step : ', step
-    if (step+1) == GA_length :
+        print 'step > 1 :', step
+    if step == 2 :
         step = 0
-        print 'step : ', step
+        print 'reset step :', step
+
+    #if (step+1) >= GA_length :
+    #    step = 0
+    #    print 'step reset : ', step
 
     df.append(pd.DataFrame(reduced_data, columns = titles))
 
