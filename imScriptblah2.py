@@ -36,12 +36,12 @@ for x in range(len(label_names)):
     pat_code[x] = sep[0][l-11:l]
     sub_code[x] = sep[1][4:]
 
-i = 0
+i = 320
 step = 0
 titles = ['scan ID','Gender','Birth Age','Scan Age','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
-while i < lim:
+while i < 400:
     i+=1
     # Splits the name of the current dataset through the '_'s.
     # This is to prevent data being misaligned for patients with multiple scans.
@@ -66,6 +66,9 @@ while i < lim:
     if GA_length < 2 :
         step = 0
         print 'step : ', step
+    if not GA_current :
+        print "GA current is empty"
+        continue
 
     # Load tissue label data
     # Tissue_labels_file = os.path.join("Data", 'sub-CC00060XX03_ses-12501_drawem_tissue_labels.nii.gz')
