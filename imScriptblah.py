@@ -20,8 +20,14 @@ T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 # print 'T2W files', T2w_names
 
 # Load GA data
-GA_all_data = pd.read_csv('GA.csv')
-print 'all data : ', GA_all_data
+datainfo = pd.read_csv('DataInfo.csv')
+Byidname = datainfo.set_index("id")
+print 'all data : ', datainfo
+Id = datainfo.iloc[0:len(datainfo), 0]
+G = datainfo.iloc[0:len(datainfo), 1]
+GAbirth = datainfo.iloc[0:len(datainfo), 2]
+GAscan = datainfo.iloc[0:len(datainfo), 3]
+
 
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
@@ -35,7 +41,7 @@ for x in range(len(label_names)):
 
 i = 0
 step = 0
-titles = ['scan ID','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+titles = ['scan ID','Gender','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
 while i < lim:
@@ -47,10 +53,10 @@ while i < lim:
     print 'sub_code : ', sub_code[i]
 
     # load current data GA info
-    GA_current = GA_all_data[GA_all_data['id'] == sub_code[i]]
-    GA_current = GA_current.values.tolist()
-    GA_length = len(GA_current)
-    print 'GA_current', GA_current
+    DI_current = datainfo[Id == sub_code[i]]
+    DI_current = DI_current.values.tolist()
+    GA_length = len(DI_current)
+    print 'Data for current patient:', DI_current
     if GA_length == 1 :
         step = 0
         print 'step : ', step
@@ -119,7 +125,8 @@ while i < lim:
         t2_avg_intensity = np.mean(t2_region)
 
         # Save all the data to a list
-        reduced_data.append([GA_current[step][0],GA_current[step][1],GA_current[step][2],region,t1_avg_intensity, t2_avg_intensity, vol])
+        # titles = ['scan ID','Gender','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+        reduced_data.append([DI_current[step][0],DI_current[step][1],DI_current[step][2],DI_current[step][3],region,t1_avg_intensity, t2_avg_intensity, vol])
     # Check if subject has had more than one scan, if so, increment step in order
     # to append corresponding GA data for the further scans
     if GA_length > 1 :
