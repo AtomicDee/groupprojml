@@ -36,12 +36,12 @@ for x in range(len(label_names)):
     pat_code[x] = sep[0][l-11:l]
     sub_code[x] = sep[1][4:]
 
-i = 320
+i = 0
 step = 0
 titles = ['scan ID','Gender','Birth Age','Scan Age','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
-while i < 400:
+while i < lim:
     i+=1
     # Splits the name of the current dataset through the '_'s.
     # This is to prevent data being misaligned for patients with multiple scans.
