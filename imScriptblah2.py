@@ -86,13 +86,15 @@ while i < lim:
     try:
         T1w_im = nib.load(T1w_restore_brain_file)
     except:
-        print 'T1w dataset was missing. Proceeding by leaving it blank.'
+        print 'T1w dataset was missing. Skipping patient.'
         T1w_cont = 0
+        continue
     try:
         T2w_im = nib.load(T2w_restore_brain_file)
     except:
-        print 'T2w dataset was missing. Proceeding by leaving it blank.'
+        print 'T2w dataset was missing. Skipping Patient.'
         T2w_cont = 0
+        continue
 
     if T1w_cont == 1:
         T1_units = T1w_im.header.get_xyzt_units() #mm, sec
