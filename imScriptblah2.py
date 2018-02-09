@@ -25,13 +25,14 @@ GA_all_data = pd.read_csv('unpickled_dHCP_demographics_filtered30-01-18.csv')
 print 'all data : ', GA_all_data
 
 # Setting a limit to the number of iterations based on the number of patients
-lim = len(label_names)
+lim = len(label_names[0:10])
+print 'lim : ', lim;
 # limit = 200;
 
 # Sampling the patient codes and samples for data separation
 pat_code = [0]*lim
 sub_code = [0]*lim
-for x in range(len(label_names)):
+for x in range(lim):
     sep = label_names[x].split("_")
     l = len(sep[0])
     pat_code[x] = sep[0][l-11:l]
