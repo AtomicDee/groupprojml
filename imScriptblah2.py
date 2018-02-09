@@ -21,11 +21,12 @@ T2w_names = glob.glob(os.path.join("/Users/daria/Documents/Group diss/Group Proj
 # print scan_id, session_code
 
 # Load GA data
-GA_all_data = pd.read_csv('Datainfo.csv')
+GA_all_data = pd.read_csv('unpickled_dHCP_demographics_filtered30-01-18.csv')
 print 'all data : ', GA_all_data
 
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
+# limit = 200;
 
 # Sampling the patient codes and samples for data separation
 pat_code = [0]*lim
@@ -38,7 +39,7 @@ for x in range(len(label_names)):
 
 i = 0
 step = 0
-titles = ['scan ID','Gender','Birth Age','Scan Age','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+titles = ['scan ID','Session ID','Birth Age','Scan Age','Gender','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
 while i < lim:
@@ -159,8 +160,8 @@ while i < lim:
         else:
             t2_region = t2_avg_intensity = '__Data__Missing__'
         # Save all the data to a list
-        if len(GA_current[step]) == 4 :
-            reduced_data.append([GA_current[step][0],GA_current[step][1],GA_current[step][2], GA_current[step][3],region,t1_avg_intensity, t2_avg_intensity, vol])
+        if len(GA_current[step]) == 6 :
+            reduced_data.append([GA_current[step][1],GA_current[step][2],GA_current[step][3], GA_current[step][4], GA_current[step][5],region,t1_avg_intensity, t2_avg_intensity, vol])
     # Check if subject has had more than one scan, if so, increment step in order
     # to append corresponding GA data for the further scans
     if GA_length > 1 :
@@ -175,15 +176,13 @@ while i < lim:
     #    print 'step reset : ', step
 
     df.append(pd.DataFrame(reduced_data, columns = titles))
-
-
     # print 'Reduced Data : ', reduced_data
 
     # i += 1
 
 results = pd.concat(df, keys = pat_code)
 
-results.to_csv('drawem_labels_all_data.csv')
+results.to_csv('200_data.csv')
 
 print results
 # https://github.com/MIRTK/DrawEM/blob/master/label_names/all_labels.csv
