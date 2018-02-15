@@ -22,17 +22,21 @@ T2w_names = glob.glob(os.path.join("/Users/daria/Documents/Group diss/Group Proj
 
 # Load GA data
 GA_all_data = pd.read_csv('unpickled_dHCP_demographics_filtered30-01-18.csv')
-print 'all data : ', GA_all_data
-
+# print 'all data : ', GA_all_data
+# range_scans = 0
 # Setting a limit to the number of iterations based on the number of patients
-lim = len(label_names[0:10])
+# lim = len(label_names[range_scans:range_scans+10])
+lim = len(label_names)
 print 'lim : ', lim;
+print 'range : ', len(range(lim+1))
 # limit = 200;
 
 # Sampling the patient codes and samples for data separation
-pat_code = [0]*lim
-sub_code = [0]*lim
-for x in range(lim):
+pat_code = [0]*int(lim)
+print 'len pat code = ', len(pat_code)
+sub_code = [0]*int(lim)
+for x in range(0,lim-1):
+    # sep = label_names[range_scans+x].split("_")
     sep = label_names[x].split("_")
     l = len(sep[0])
     pat_code[x] = sep[0][l-11:l]
@@ -40,11 +44,11 @@ for x in range(lim):
 
 i = 0
 step = 0
-titles = ['scan ID','Session ID','Birth Age','Scan Age','Gender','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+titles = ['Pat ID','Session ID','Birth Age','Scan Age','Gender','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
-while i < lim:
-    i+=1
+while i < lim-1:
+
     # Splits the name of the current dataset through the '_'s.
     # This is to prevent data being misaligned for patients with multiple scans.
     sep = label_names[i].split("_")
@@ -82,7 +86,7 @@ while i < lim:
     shape = tissue_labels.get_shape()
     affine = tissue_labels.affine
     # print tissue_labels.dataobj
-
+    i += 1
     # Load T1 images and extract data
     # T1w_restore_brain_file = os.path.join("Data", 'sub-CC00060XX03_ses-12501_T1w_restore_brain.nii.gz')
     # If the dataset is missing, it will leave it blank but continue to loop over the data.
@@ -92,13 +96,13 @@ while i < lim:
     except:
         print 'T1w dataset was missing. Skipping patient.'
         T1w_cont = 0
-        continue
+        # continue
     try:
         T2w_im = nib.load(T2w_restore_brain_file)
     except:
         print 'T2w dataset was missing. Skipping Patient.'
         T2w_cont = 0
-        continue
+        # continue
 
     if T1w_cont == 1:
         T1_units = T1w_im.header.get_xyzt_units() #mm, sec
@@ -179,11 +183,11 @@ while i < lim:
     df.append(pd.DataFrame(reduced_data, columns = titles))
     # print 'Reduced Data : ', reduced_data
 
-    # i += 1
+results = pd.concat(df, keys = sub_code)
+# with open('150_data.csv', 'a') as f:
+#     results.to_csv(f, header=False)
 
-results = pd.concat(df, keys = pat_code)
-
-results.to_csv('200_data.csv')
+results.to_csv('all_final_data.csv')
 
 print results
 # https://github.com/MIRTK/DrawEM/blob/master/label_names/all_labels.csv
