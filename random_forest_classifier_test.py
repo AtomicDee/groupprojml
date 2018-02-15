@@ -13,7 +13,7 @@ import csv
 fields = ['Pat ID', 'Session ID', 'Birth Age', 'Scan Age', 'Gender', 'Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 # Select which columns to load
 
-path = '/home/avi/Desktop/finaldata.csv'
+path = '/Volumes/Harddrive_MS/Group_Project_Meng/groupprojml/finaldata.csv'
 # The path where all the data is held
 
 data = pd.read_csv(path, skipinitialspace=True, usecols=fields)
@@ -33,37 +33,35 @@ patID = data['Pat ID']
 new_data = []
 df = []
 initrow = []
-
+row = [None]*268
 curr_sess = currT1 = currT2 = currVol = []
 for i in range(1):
     x = 1
-    currID = patID[x]
-    currSess = sessID[x]
-    currGen = gender[x]
-    currBirth = birth[x]
-    currScan = scan[x]
+    row[0] = patID[x]
+    row[1] = sessID[x]
+    row[2] = gender[x]
+    row[3] = birth[x]
+    row[4]= scan[x]
     # initrow = [currID, currSess, currGen, currBirth, currScan]
-    initrow.append(currID)
-    initrow.append(currSess)
-    initrow.append(currGen)
-    initrow.append(currBirth)
-    initrow.append(currScan)
-    # initrow = np.transpose(initrow)
+
     for j in range(87):
-        currT1.append(T1[j*x])
-        currT2.append(T2[j*x])
-        currVol.append(Volume[j*x])
-    row = [initrow, currT1, currT2, currVol]
+
+        row[j+5] = T1[j*x]
+        row[j+93] = T2[j*x]
+        row[j+181] = Volume[j*x]
+
     print row
+    data.append(pd.DataFrame(row))
     raw_input()
+
     # np.concatenate((new_data, row), axis=1)
     # new_data.append(row)
-    df.append(pd.DataFrame(row))
+    #df.append(pd.DataFrame(row))
     initrow = row = curr_sess = currT1 = currT2 = currVol = []
-    currID = currSess = currGen
     x += 87
 
-df.to_csv('New_formatted_data.csv')
+
+data.to_csv('New_formatted_data.csv')
 
 # training_data = T2.values.reshape(-1, 1)
 # training_labels = gender
