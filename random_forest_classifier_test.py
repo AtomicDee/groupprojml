@@ -13,7 +13,8 @@ import csv
 fields = ['Pat ID', 'Session ID', 'Birth Age', 'Scan Age', 'Gender', 'Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 # Select which columns to load
 
-path = '/Volumes/Harddrive_MS/Group_Project_Meng/groupprojml/finaldata.csv'
+# path = '/Volumes/Harddrive_MS/Group_Project_Meng/groupprojml/finaldata.csv'
+path = '/home/avi/Desktop/finaldata.csv'
 # The path where all the data is held
 
 data = pd.read_csv(path, skipinitialspace=True, usecols=fields)
