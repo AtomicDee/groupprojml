@@ -8,10 +8,11 @@ import nibabel
 import csv
 import sys
 
-path = "/Users/daria/Documents/Group diss/Group Project Data/Data/Reformatted_data.csv"
+path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
+filename = 'Reformatted_data.csv'
 # The path where all the data is held
 
-data = pd.read_csv(path)
+data = pd.read_csv(path+filename)
 # Using pandas to read all the data in
 
 T1 = []
@@ -44,4 +45,11 @@ T2 = pd.concat(T2)
 Volume = pd.concat(Volume)
 
 # Save all these separately
-results.to_csv('all_final_data.csv')
+PatCode.to_csv(os.path.join(path,r'PatCode.csv'))
+SessID.to_csv(os.path.join(path,r'SessID.csv'))
+BirthAge.to_csv(os.path.join(path,r'BirthAge.csv'))
+ScanAge.to_csv(os.path.join(path,r'ScanAge.csv'))
+Gender.to_csv(os.path.join(path,r'Gender.csv'))
+T1.to_csv(os.path.join(path,r'T1.csv'))
+T2.to_csv(os.path.join(path,r'T2.csv'))
+Volume.to_csv(os.path.join(path,r'Volume.csv'))
