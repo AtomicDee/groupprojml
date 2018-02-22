@@ -55,16 +55,22 @@ for row in T1.itertuples():
         train_t1.append(pd.DataFrame([row]))
     else:
         test_t1.append(pd.DataFrame([row]))
-        i += 1
+    i += 1
 train_t1 = pd.concat(train_t1)
 test_t1 = pd.concat(test_t1)
 
+train_labels = []
+test_labels = []
+j = 1
 
-        train_lab.append(pd.DataFrame([]))
-
-
-training_data = train_t1
-training_labels = Gender
+for row in Gender.itertuples():
+    if j % 2 == 0:
+        train_labels.append(pd.DataFrame([row]))
+    else:
+        test_labels.append(pd.DataFrame([row]))
+    j += 1
+train_labels = np.ravel( pd.concat( train_labels ) )
+test_labels = np.ravel( pd.concat( test_labels ) )
 
 # Features : GA Birth, GA Scan, Gender, Region, T1 intensity, T2 intensity, volume
 # Max features = <sqrt(7) = 2
@@ -75,9 +81,10 @@ training_labels = Gender
 
 clf = RandomForestClassifier(max_depth = 3, max_features = 2, n_estimators = 10,
                              max_leaf_nodes = 30)
-clf = clf.fit(training_data, training_labels)
+clf.fit(train_t1, train_labels)
+print clf.score(test_t1, test_labels)
 
-clf.predict(test_t1)
+# clf.predict(test_t1)
 # print clf.feature_importances_
 
 
