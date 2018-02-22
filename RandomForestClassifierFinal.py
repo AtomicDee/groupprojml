@@ -54,33 +54,4 @@ clf = RandomForestClassifier(max_depth = 7, max_features = 2, n_estimators = 30,
                              max_leaf_nodes = 50)
 clf.fit(training_data, training_labels)
 print clf.score(testing_data, testing_labels)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
+print PatCode
