@@ -17,12 +17,16 @@ from sklearn.tree import DecisionTreeClassifier
 # X, y = make_gaussian_quantiles(n_samples=1000, n_features=10,
 #                                n_classes=3, random_state=1)
 titles = ['Session ID','Birth Age','Scan Age','Gender','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
-all_data = pd.read_csv('all_final_data.csv')
+path = "/Users/daria/Documents/Group diss/Group Project Data/Data/"
+data = pd.read_csv(path, skipinitialspace=True, usecols=fields)
 
 n_split = 300
 
-X_train, X_test = X[:n_split], X[n_split:]
-y_train, y_test = y[:n_split], y[n_split:]
-
-print 'X_train : ', X_train.shape
-print 'y_train : ', len(y_train)
+sessID = data['Session ID']
+birth = data['Birth Age']
+scan = data['Scan Age']
+gender = data['Gender']
+region = data['Region']
+T1 = data['T1 Average Intensity']
+T2 = data['T2 Average Intensity']
+Vol = data['Volume']
