@@ -7,6 +7,7 @@ from sklearn import tree
 import nibabel
 import csv
 import sys
+from sklearn.model_selection import train_test_split
 
 path = '/home/avi/Desktop/Reformatted_data.csv'
 # The path where all the data is held
@@ -32,61 +33,27 @@ for row in data.itertuples():
     T1.append(pd.DataFrame([row[7:94]]))
     T2.append(pd.DataFrame([row[95:182]]))
     Volume.append(pd.DataFrame([row[183:270]]))
-PatCode = pd.concat( PatCode )
-SessID = pd.concat( SessID )
-BirthAge = pd.concat( BirthAge )
-ScanAge = pd.concat( ScanAge )
-Gender = pd.concat( Gender )
-# PatCode = np.ravel( pd.concat( PatCode ) )
-# SessID = np.ravel( pd.concat( SessID ) )
-# BirthAge = np.ravel( pd.concat( BirthAge ) )
-# ScanAge = np.ravel( pd.concat( ScanAge ) )
-# Gender = np.ravel( pd.concat( Gender ) )
+PatCode = np.ravel( pd.concat( PatCode ) )
+SessID = np.ravel( pd.concat( SessID ) )
+BirthAge = np.ravel( pd.concat( BirthAge ) )
+ScanAge = np.ravel( pd.concat( ScanAge ) )
+Gender = np.ravel( pd.concat( Gender ) )
 T1 = pd.concat(T1)
 T2 = pd.concat(T2)
 Volume = pd.concat(Volume)
 
-train_t1 = []
-test_t1 = []
-i = 1
+training_data = []
+testing_data = []
+training_labels = []
+testing_labels = []
 
-for row in T1.itertuples():
-    if i % 2 == 0:
-        train_t1.append(pd.DataFrame([row]))
-    else:
-        test_t1.append(pd.DataFrame([row]))
-    i += 1
-train_t1 = pd.concat(train_t1)
-test_t1 = pd.concat(test_t1)
+seed = np.random.seed(42)
+training_data, testing_data, training_labels, testing_labels = train_test_split(T1, Gender, random_state=42)
 
-train_labels = []
-test_labels = []
-j = 1
-
-for row in Gender.itertuples():
-    if j % 2 == 0:
-        train_labels.append(pd.DataFrame([row]))
-    else:
-        test_labels.append(pd.DataFrame([row]))
-    j += 1
-train_labels = np.ravel( pd.concat( train_labels ) )
-test_labels = np.ravel( pd.concat( test_labels ) )
-
-# Features : GA Birth, GA Scan, Gender, Region, T1 intensity, T2 intensity, volume
-# Max features = <sqrt(7) = 2
-# Max depth : 3,5,7,9 - compare
-# No_estimators : 10, 30, 100 - compare (generall the more the bettwer however the cost of
-# learning increases and the benefit of learning decreases as you go up, 100 probably
-# too many, maybe try 50 or 60 as well and compare)
-
-clf = RandomForestClassifier(max_depth = 3, max_features = 2, n_estimators = 10,
-                             max_leaf_nodes = 30)
-clf.fit(train_t1, train_labels)
-print clf.score(test_t1, test_labels)
-
-# clf.predict(test_t1)
-# print clf.feature_importances_
-
+clf = RandomForestClassifier(max_depth = 7, max_features = 2, n_estimators = 30,
+                             max_leaf_nodes = 50)
+clf.fit(training_data, training_labels)
+print clf.score(testing_data, testing_labels)
 
 
 
