@@ -34,22 +34,22 @@ for row in data.itertuples():
     T2.append(pd.DataFrame([row[95:182]]))
     Volume.append(pd.DataFrame([row[183:270]]))
 
-
 PatCode = pd.concat( PatCode )
 SessID = pd.concat( SessID )
 BirthAge = pd.concat( BirthAge )
 ScanAge = pd.concat( ScanAge )
 Gender = pd.concat( Gender )
+
 T1 = pd.concat(T1)
 T2 = pd.concat(T2)
 Volume = pd.concat(Volume)
 
 # Save all these separately
-PatCode.to_csv(os.path.join(path,r'PatCode.csv'))
-SessID.to_csv(os.path.join(path,r'SessID.csv'))
-BirthAge.to_csv(os.path.join(path,r'BirthAge.csv'))
-ScanAge.to_csv(os.path.join(path,r'ScanAge.csv'))
-Gender.to_csv(os.path.join(path,r'Gender.csv'))
-T1.to_csv(os.path.join(path,r'T1.csv'))
-T2.to_csv(os.path.join(path,r'T2.csv'))
-Volume.to_csv(os.path.join(path,r'Volume.csv'))
+PatCode.to_csv(os.path.join(path,'PatCode.csv'))
+SessID.to_csv(os.path.join(path,'SessID.csv'))
+BirthAge.to_csv(os.path.join(path,'BirthAge.csv'))
+ScanAge.to_csv(os.path.join(path,'ScanAge.csv'))
+Gender.to_csv(os.path.join(path,'Gender.csv'))
+T1.to_csv(os.path.join(path,'T1.csv'))
+T2.to_csv(os.path.join(path,'T2.csv'))
+Volume.to_csv(os.path.join(path,'Volume.csv'))
