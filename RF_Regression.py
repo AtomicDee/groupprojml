@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn import decomposition
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn import tree
 import nibabel
 import csv
@@ -49,14 +49,40 @@ training_labels = []
 testing_labels = []
 
 seed = np.random.seed(42)
-training_data, testing_data, training_labels, testing_labels = train_test_split(T1, Gender, train_size=0.5)
+training_data, testing_data, training_labels, testing_labels = train_test_split(T1, ScanAge, train_size=0.5)
 # the problem with setting some parameters too high is that it becomes overfit
 # to the training data, so that when being run the clf becomes crappy at fitting
 # test data
-clf = RandomForestClassifier(max_depth = 9, max_features = 2, n_estimators = 500,
-                             max_leaf_nodes = 100)
-clf.fit(training_data, training_labels)
-pred = clf.predict(testing_data, testing_labels)
-print clf.score(testing_data, testing_labels)
-print accuracy_score()
+
+depth = [3, 5, 7, 9]
+estim = [10, 30, 50, 100, 300, 500]
+table = np.zeros((np.size(depth), np.size(estim)))
+
+for i in range(len(depth)):
+    curr_score = []
+    for j in range(len(estim)):
+        clf = RandomForestRegressor(max_depth = depth[i], max_features = 2, n_estimators = estim[j],
+                                     max_leaf_nodes = 1000)
+        clf.fit(training_data, training_labels)
+        # pred = clf.predict(testing_data, testing_labels)
+        curr_score = (clf.score(testing_data, testing_labels))
+        table[i][j] = curr_score
+print table
+print type(table)
+
+# print accuracy_score()
 # print Gender.size
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
