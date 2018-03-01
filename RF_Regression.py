@@ -9,7 +9,7 @@ import csv
 import sys
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-
+from sklearn.cross_validation import cross_val_score
 path = '/home/avi/Desktop/Reformatted_data.csv'
 # The path where all the data is held
 
@@ -54,27 +54,22 @@ training_data, testing_data, training_labels, testing_labels = train_test_split(
 # to the training data, so that when being run the clf becomes crappy at fitting
 # test data
 
-depth = [3, 5, 7, 9]
-estim = [10, 30, 50, 100, 300, 500]
+depth = [3, 5, 7, 9, 11, 15]
+estim = [10, 30, 50, 100, 300, 500, 800, 1000]
 table = np.zeros((np.size(depth), np.size(estim)))
 
 for i in range(len(depth)):
     curr_score = []
     for j in range(len(estim)):
-        clf = RandomForestRegressor(max_depth = depth[i], max_features = 2, n_estimators = estim[j],
-                                     max_leaf_nodes = 1000)
+        clf = RandomForestRegressor(max_depth = depth[i], max_features = 2, n_estimators = estim[j])
         clf.fit(training_data, training_labels)
-        # pred = clf.predict(testing_data, testing_labels)
         curr_score = (clf.score(testing_data, testing_labels))
         table[i][j] = curr_score
-print table
-print type(table)
-
-# print accuracy_score()
-# print Gender.size
+# print table
 
 
 
+# 15 50 
 
 
 
