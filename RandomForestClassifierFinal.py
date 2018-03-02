@@ -8,6 +8,7 @@ import nibabel
 import csv
 import sys
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 path = '/home/avi/Desktop/Reformatted_data.csv'
 # The path where all the data is held
@@ -48,12 +49,14 @@ training_labels = []
 testing_labels = []
 
 seed = np.random.seed(42)
-training_data, testing_data, training_labels, testing_labels = train_test_split(T1, Gender, random_state=42)
+training_data, testing_data, training_labels, testing_labels = train_test_split(T1, Gender, train_size=0.5)
 # the problem with setting some parameters too high is that it becomes overfit
 # to the training data, so that when being run the clf becomes crappy at fitting
 # test data
-clf = RandomForestClassifier(max_depth = 9, max_features = 2, n_estimators = 10000,
+clf = RandomForestClassifier(max_depth = 9, max_features = 2, n_estimators = 500,
                              max_leaf_nodes = 100)
 clf.fit(training_data, training_labels)
+pred = clf.predict(testing_data, testing_labels)
 print clf.score(testing_data, testing_labels)
+print accuracy_score()
 # print Gender.size
