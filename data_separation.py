@@ -14,7 +14,7 @@ filename = 'Reformatted_data.csv'
 
 data = pd.read_csv(path+filename)
 # Using pandas to read all the data in
-
+print data, data.shape
 T1 = []
 T2 = []
 Volume = []
@@ -25,31 +25,34 @@ ScanAge = []
 Gender = []
 
 for row in data.itertuples():
-    PatCode.append(pd.DataFrame([row[2]]))
-    SessID.append(pd.DataFrame([row[3]]))
-    BirthAge.append(pd.DataFrame([row[4]]))
-    ScanAge.append(pd.DataFrame([row[5]]))
-    Gender.append(pd.DataFrame([row[6]]))
-    T1.append(pd.DataFrame([row[7:94]]))
-    T2.append(pd.DataFrame([row[95:182]]))
-    Volume.append(pd.DataFrame([row[183:270]]))
+    PatCode.append(pd.DataFrame([row[1]]))
+    # SessID.append(pd.DataFrame([row[2]]))
+    # BirthAge.append(pd.DataFrame([row[3]]))
+    # ScanAge.append(pd.DataFrame([row[5]]))
+    # Gender.append(pd.DataFrame([row[6]]))
+    # T1.append(pd.DataFrame([row[7:94]]))
+    # T2.append(pd.DataFrame([row[95:182]]))
+    # Volume.append(pd.DataFrame([row[183:270]]))
 
 PatCode = pd.concat( PatCode )
-SessID = pd.concat( SessID )
-BirthAge = pd.concat( BirthAge )
-ScanAge = pd.concat( ScanAge )
-Gender = pd.concat( Gender )
 
-T1 = pd.concat(T1)
-T2 = pd.concat(T2)
-Volume = pd.concat(Volume)
+# SessID = pd.concat( SessID )
+# BirthAge = pd.concat( BirthAge )
+# ScanAge = pd.concat( ScanAge )
+# Gender = pd.concat( Gender )
 
+# T1 = pd.concat(T1)
+# print 'shape t1 : ', T1.shape
+# T2 = pd.concat(T2)
+# print 'shape t2 : ', T2.shape
+# Volume = pd.concat(Volume)
+# print 'shape vol : ', Volume.shape
 # Save all these separately
 PatCode.to_csv(os.path.join(path,'PatCode.csv'))
-SessID.to_csv(os.path.join(path,'SessID.csv'))
-BirthAge.to_csv(os.path.join(path,'BirthAge.csv'))
-ScanAge.to_csv(os.path.join(path,'ScanAge.csv'))
-Gender.to_csv(os.path.join(path,'Gender.csv'))
-T1.to_csv(os.path.join(path,'T1.csv'))
-T2.to_csv(os.path.join(path,'T2.csv'))
-Volume.to_csv(os.path.join(path,'Volume.csv'))
+# SessID.to_csv(os.path.join(path,'SessID.csv'))
+# BirthAge.to_csv(os.path.join(path,'BirthAge.csv'))
+# ScanAge.to_csv(os.path.join(path,'ScanAge.csv'))
+# Gender.to_csv(os.path.join(path,'Gender.csv'))
+# T1.to_csv(os.path.join(path,'T1.csv'))
+# T2.to_csv(os.path.join(path,'T2.csv'))
+# Volume.to_csv(os.path.join(path,'Volume.csv'))
