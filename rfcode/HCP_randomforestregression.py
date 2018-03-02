@@ -13,7 +13,7 @@ Created on Mon Feb 13 11:17:29 2017
 """
 import pandas as pd
 import numpy as np
-import os 
+import os
 import rfcode.helpfunctions as hf
 from sklearn import decomposition
 from sklearn.ensemble import RandomForestRegressor
@@ -34,8 +34,8 @@ labelsR=nibabel.load(os.path.join(groupdirname,'Q1-Q6_RelatedParcellation210.Cor
 
 
 ####### paths to training and test data #############
-dirname='/vol/medic01/users/ecr05/for_ricardo/' 
-subjectpath='/vol/medic01/users/ecr05/HCP_PARCELLATION/TRAININGDATA/TRAININGandTESTandVALlist.txt'  # load/preprocess all data as one and then randomly select test subjects 
+dirname='/vol/medic01/users/ecr05/for_ricardo/'
+subjectpath='/vol/medic01/users/ecr05/HCP_PARCELLATION/TRAININGDATA/TRAININGandTESTandVALlist.txt'  # load/preprocess all data as one and then randomly select test subjects
 csvpath='unrestricted.csv' # behavioural spreadsheet
 datapath='/vol/medic01/users/ecr05/HCP_PARCELLATION/TESTINGDATA/rfTrainTestValData.npy'#'/vol/medic01/users/ecr05/HCP_PARCELLATION/TRAININGDATA/funcandlabelset_valandtrain.txt' #os.path.join(dirname,'GLASS_PRO_360_PCORR.mat') # 'GLASS_PRO_360_Z.mat' #
 savedatapath=''#/vol/medic01/users/ecr05/HCP_PARCELLATION/TESTINGDATA/rfTrainData'
@@ -92,18 +92,18 @@ for v_index,variable in enumerate(variables):
             # print(xl_file.loc[xl_file['Subject']==int(subj),variables[0]].item())
             alllabels[index,v_index]=xl_file.loc[xl_file['Subject'] == int(subj), variable].item()
             labels.append(alllabels[index,v_index])
-            
+
         else:
             # delete data for which there are no labels
             print('delete rows', index, subjects[index])
             deletedrows.append(index)
-     
+
      DATA_v=np.delete(DATA, deletedrows, 0)
      print('features_v shape',DATA_v.shape)
      labels=np.asarray(labels)
      deletedrows_all.append(deletedrows)
-     
-     
+
+
      testingsubjectids=np.unique(np.random.choice(DATA_v.shape[0],70))
      testingDATA=DATA_v[testingsubjectids,:] #hf.read_DATA(testpath,readtype)
      testinglabels=labels[testingsubjectids]
@@ -112,8 +112,8 @@ for v_index,variable in enumerate(variables):
      traininglabels=np.delete(labels,np.sort(testingsubjectids),axis=0)
      # save testids for future runs
      np.save('/vol/medic01/users/ecr05/HCP_PARCELLATION/TESTINGDATA/testsubjectids',testingsubjectids)
-     
-    
+
+
      ################### PRE-PROCESS #############################################
 
      if runPCA==True:
@@ -132,7 +132,7 @@ for v_index,variable in enumerate(variables):
          indices1=np.where(f_mask==True)
          testbest=testingDATA[:,np.where(f_mask==True)[0]]
         ################ run random forest based feature selection ##################
-    
+
         # print('features length after t-test based reduction',featuresbest.shape[1],indices1[0].shape)
          print('perform random forest based feature selection')
          model=RandomForestRegressor(n_estimators=1000,random_state=RANDOM_STATE,n_jobs=-1)
@@ -143,10 +143,10 @@ for v_index,variable in enumerate(variables):
          print('rf importances', importances)
          std = np.std([tree.feature_importances_ for tree in model.estimators_], axis=0)
          indices = np.argsort(importances)[::-1]
-    
+
          print('select the threshold on most important featutes by cross-validation')
          threshold=50 # hf.optimise_feature_selection_stage2(indices,featuresbest,traininglabels,'regression',RANDOM_STATE)
-     
+
          featuresfin=featuresbest[:,indices[:threshold]]
          TestFeaturesfin=testbest[:,indices[:threshold]]
 
@@ -154,13 +154,13 @@ for v_index,variable in enumerate(variables):
          top100indices_all.append(top100indices[:threshold])
      opt_f=9
      opt_depth=15
-     
+
      ##################### OPTIMISE RANDOM FOREST  for each variable ##########################################
      print('Optimise Random Forest parameters for max depth and max features per node')
      #if optimise_rf==True:
      #    opt_depth,opt_f=hf.optimise_random_forest(5,featuresfin,featuresfin,traininglabels,'regression',os.path.join(dirname+'/paramopt/','rf_regressionparams'+ variables[0] + '.txt'),RANDOM_STATE,opt_alpha)
-     
-     clf=linear_model.Ridge(alpha=10.0) 
+
+     clf=linear_model.Ridge(alpha=10.0)
      clf.fit(featuresfin,traininglabels)
      ridgescore = clf.score(TestFeaturesfin,testinglabels)
      model=RandomForestRegressor(max_depth=opt_depth, n_estimators=10000, max_features=opt_f,random_state=RANDOM_STATE,n_jobs=-1)
@@ -175,16 +175,16 @@ for v_index,variable in enumerate(variables):
      top50indices=indices1[0][indices_fin[:50]]
      # map selected features back to image domain
      featuresLfunc,featuresRfunc,featureslist=hf.map_feature_importances_back_to_image_space_HCP(110,360,top100indices,labelsL, labelsR)
-    
-    
-     
+
+
+
      np.save(os.path.join(dirname+'/paramopt/','rf_features-'+variable),top100indices)
      np.save(os.path.join(dirname+'/paramopt/','rf_features-reprojected'+variable),featureslist)
      np.savetxt(os.path.join(dirname+'/paramopt/','rf_surfacefeatures-fin'+ variable + 'L.txt'),featuresLfunc)
      np.savetxt(os.path.join(dirname+'/paramopt/', 'rf_surfacefeatures-fin'+ variable + 'R.txt'), featuresRfunc)
-        
+
 #==============================================================================
-#       
+#
 # print('delete',deletedrows_all,np.unique(deletedrows_all))
 # features = np.delete(features, np.unique(deletedrows_all), 0)
 # alllabels = np.delete(alllabels, np.unique(deletedrows_all), 0)
@@ -193,22 +193,17 @@ for v_index,variable in enumerate(variables):
 # np.savetxt(os.path.join(dirname+'/paramopt/','rf_labels-alllabels'),alllabels,delimiter=',')
 # featuresfin=features[:,top100indices_allvariables]
 # np.savetxt(os.path.join(dirname+'/paramopt/','rf_features-all'),featuresfin,delimiter=',')
-# 
-# # if more than one column variance normalise prior to summing 
+#
+# # if more than one column variance normalise prior to summing
 # if alllabels.shape[1] > 1:
 #     print(np.mean(alllabels,axis=0))
 #     alllabels=(alllabels - np.mean(alllabels,axis=0)) / np.std(alllabels,axis=0)
-# 
+#
 # labels=np.sum(alllabels,axis=1)
-# 
+#
 # print(labels.shape)
-# 
+#
 # if optimise_rf==True:
 #         opt_f,opt_depth=hf.optimise_random_forest(5,featuresfin,featuresfin,labels,'regression',os.path.join(dirname+'/paramopt/','rf_regressionparams_all_variables.txt'),RANDOM_STATE,opt_alpha)
-# 
+#
 #==============================================================================
-
-
-
-
-
