@@ -24,7 +24,6 @@ T1 = T1[T1.columns[1:]]
 T2 = T2[T2.columns[1:]]
 Vol = Volume[Volume.columns[1:]]
 SA = ScanAge[ScanAge.columns[1]]
-
 BA = BirthAge[BirthAge.columns[1]]
 
 rng = np.random.RandomState(1)
@@ -35,13 +34,13 @@ labels = SA
 training_data, testing_data, training_labels, testing_labels = train_test_split(data, labels, train_size=0.8)
 
 # Fit regression model
-regr_1 = DecisionTreeRegressor(max_depth=4)
+regr_1 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4), random_state=rng)
 
 regr_2 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-                          n_estimators=300, random_state=rng)
+                          n_estimators=150, random_state=rng)
 
 regr_3 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-                          n_estimators=1000, random_state=rng)
+                          n_estimators=300, random_state=rng)
 
 regr_1.fit(training_data, training_labels)
 regr_2.fit(training_data, training_labels)
@@ -60,15 +59,6 @@ z_1 = regr_1.predict(testing_data)
 z_2 = regr_2.predict(testing_data)
 z_3 = regr_3.predict(testing_data)
 
-fi_3 = regr_3.feature_importances_
-print len(fi_3)
-
-T1_feature_scores = fi_3[:87]
-print len(T1_feature_scores)
-T2_feature_scores = fi_3[87:174]
-print len(T2_feature_scores)
-Vol_feature_scores = fi_3[174:]
-print len(Vol_feature_scores)
 
 # sy_1 = regr_1.score(training_data, training_labels)
 # sy_2 = regr_2.score(training_data, training_labels)
@@ -122,3 +112,22 @@ print len(Vol_feature_scores)
 # plt.show()
 #
 # # feature extraction
+fi_3 = regr_3.feature_importances_
+print len(fi_3)
+
+T1_feature_scores = fi_3[:87]
+print len(T1_feature_scores)
+print type(T1_feature_scores)
+T2_feature_scores = fi_3[87:174]
+print len(T2_feature_scores)
+Vol_feature_scores = fi_3[174:]
+print len(Vol_feature_scores)
+
+df1 = pd.DataFrame(T1_feature_scores)
+df1.to_csv("new_T1_300.csv", header=None, index=None)
+
+df2 = pd.DataFrame(T1_feature_scores)
+df2.to_csv("new_T2_300.csv", header=None, index=None)
+
+df3 = pd.DataFrame(T1_feature_scores)
+df3.to_csv("new_Volume_300.csv", header=None, index=None)
