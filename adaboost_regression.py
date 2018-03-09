@@ -16,10 +16,13 @@ from sklearn.model_selection import train_test_split
 
 path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
 T1 = pd.read_csv(path+'T1.csv')
-T2 = pd.read_csv(path+'T2.csv')
-Volume = pd.read_csv(path+'Volume.csv')
+print T1
+raw_input('press ENTER to continue')
+T2 = pd.read_csv(path+'T2.csv', sep=';')
+Volume = pd.read_csv(path+'Volume.csv', sep=';')
 BirthAge = pd.read_csv(path+'BirthGA.csv')
 ScanAge = pd.read_csv(path+'ScanGA.csv')
+
 T1 = T1[T1.columns[1:]]
 T2 = T2[T2.columns[1:]]
 Vol = Volume[Volume.columns[1:]]
@@ -110,24 +113,24 @@ z_3 = regr_3.predict(testing_data)
 # plt.legend()
 #
 # plt.show()
-#
+
 # # feature extraction
 fi_3 = regr_3.feature_importances_
 print len(fi_3)
 
-T1_feature_scores = fi_3[:87]
+T1_feature_scores = fi_3[:86]
 print len(T1_feature_scores)
 print type(T1_feature_scores)
-T2_feature_scores = fi_3[87:174]
+T2_feature_scores = fi_3[86:172]
 print len(T2_feature_scores)
-Vol_feature_scores = fi_3[174:]
+Vol_feature_scores = fi_3[172:]
 print len(Vol_feature_scores)
 
 df1 = pd.DataFrame(T1_feature_scores)
-df1.to_csv("new_T1_300.csv", header=None, index=None)
+df1.to_csv(path+"new_T1_300.csv", header=None, index=None)
 
-df2 = pd.DataFrame(T1_feature_scores)
-df2.to_csv("new_T2_300.csv", header=None, index=None)
+df2 = pd.DataFrame(T2_feature_scores)
+df2.to_csv(path+"new_T2_300.csv", header=None, index=None)
 
-df3 = pd.DataFrame(T1_feature_scores)
-df3.to_csv("new_Volume_300.csv", header=None, index=None)
+df3 = pd.DataFrame(Vol_feature_scores)
+df3.to_csv(path+"new_Volume_300.csv", header=None, index=None)
