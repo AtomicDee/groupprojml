@@ -7,12 +7,22 @@ from sklearn import tree
 import nibabel
 import csv
 import sys
+<<<<<<< HEAD
 
 path = '/home/avi/Desktop/new_normalised_data.csv'
 data = pd.read_csv(path)
 # Using pandas to read all the data in
+=======
+>>>>>>> 03e8573aa85a992176222c06f3b59ab1c68dc04b
 
+path = '/home/avi/Desktop/new_normalised_data.csv'
+data = pd.read_csv(path)
+Using pandas to read all the data in
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 03e8573aa85a992176222c06f3b59ab1c68dc04b
 T1 = []
 T2 = []
 Volume = []
