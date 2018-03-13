@@ -31,10 +31,16 @@ all_best_estims = []
 all_best_scores = []
 all_best_cross_scores = []
 all_best_std = []
+all_best_oob = []
+max_oob = -10000
 
-for x in range(30):
+for x in range(25):
     for k in range(len(training_size)):
         training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size[k])
+        testing_data = testing_data[testing_data.columns[1:]]
+        testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
+        training_data = training_data[training_data.columns[1:]]
+        training_labels = np.ravel(training_labels[training_labels.columns[1:]])
         for i in range(len(depth)):
             curr_score = []
             for j in range(len(estim)):
@@ -44,39 +50,37 @@ for x in range(30):
                 print 'Depth: ', depth[i]
                 print 'Estimator: ', estim[j]
                 regr = RandomForestRegressor(max_depth = depth[i], max_features = 16,
-                                            n_estimators = estim[j])
+                                            n_estimators = estim[j], oob_score=True)
                 regr.fit(training_data, training_labels)
                 curr_score = regr.score(testing_data, testing_labels)
                 curr_cross_score = cross_val_score(regr, testing_data, testing_labels)
                 curr_mean = np.mean(curr_cross_score)
                 curr_std = np.std(curr_cross_score)
-                if curr_mean > curr_max:
+                curr_oob = regr.oob_score_
+                if curr_oob > max_oob and curr_mean > curr_max:
+                    max_oob = curr_oob
                     curr_cross_max = curr_mean
-                    curr_max = curr_score
+                    curr_max = curr_mean
+                    curr_score_max = curr_score
                     curr_max_std = curr_std
                     best_depth = depth[i]
                     best_estim = estim[j]
                     best_size = training_size[k]
-    # print ' '
-    # print 'The best cross score found was: ', curr_cross_max
-    # print 'With a STD of: ', curr_max_std
-    # print 'The best score is: ', curr_max
-    # print 'The optimal depth found was: ', best_depth
-    # print 'The optimal number of estimators was found to be: ', best_estim
-    # print 'The best training size is: ', best_size
-    # print ' '
     all_best_sizes.append(best_size)
     all_best_depths.append(best_depth)
     all_best_estims.append(best_estim)
-    all_best_scores.append(curr_max)
+    all_best_scores.append(curr_score_max)
     all_best_cross_scores.append(curr_cross_max)
     all_best_std.append(curr_max_std)
+    all_best_oob.append(max_oob)
     curr_cross_max = 0
+    curr_score_max
     curr_max = 0
     curr_max_std = 0
     best_depth = 0
     best_estim = 0
     best_size = 0
+    max_oob = 0
 
 print ' '
 print '########################################################################'
@@ -86,8 +90,8 @@ print 'The best score is: ', np.mean(all_best_scores)
 print 'The optimal depth found was: ', np.mean(all_best_depths)
 print 'The optimal number of estimators was found to be: ', np.mean(all_best_estims)
 print 'The best training size is: ', np.mean(all_best_sizes)
+print 'The best OOB score is: ', np.mean(all_best_oob)
 print '########################################################################'
-print ' '
 print ' '
 print '########################################################################'
 print 'All cross scores: ', all_best_cross_scores
@@ -96,61 +100,12 @@ print 'All scores: ', all_best_scores
 print 'All depths: ', all_best_depths
 print 'All estimators: ', all_best_estims
 print 'All training sizes: ', all_best_sizes
+print 'All OOB scores: ', all_best_oob
 print '########################################################################'
 print ' '
 
-#
-# best_depth = np.mean(all_best_depths)
-# best_estim = np.mean(all_best_estims)
-# training_size = np.mean(all_best_sizes)
-# training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size)
-# testing_data = testing_data[testing_data.columns[1:]]
-# testing_labels = testing_labels[testing_labels.columns[1:]]
-# training_data = training_data[training_data.columns[1:]]
-# training_labels = training_labels[training_labels.columns[1:]]
-#
-# regr_opt = RandomForestRegressor(max_depth = best_depth, max_features = 16,
-#                                 n_estimators = best_estim)
-# regr_opt.fit(training_data, training_labels)
-#
-# pred = regr_opt.predict(testing_data)
-#
-# curr_score = cross_val_score(regr_opt, testing_data, testing_labels)
-# curr_mean = np.mean(curr_score)
-# curr_std = np.std(curr_score)
-# feat_imp = regr_opt.feature_importances_
-#
-# T1_feature_scores = []
-# T2_feature_scores = []
-# Vol_feature_scores = []
-#
-# T1_feature_scores.append(pd.DataFrame(feat_imp[1:88]))
-# T2_feature_scores.append(pd.DataFrame(feat_imp[88:175]))
-# Vol_feature_scores.append(pd.DataFrame(feat_imp[175:]))
-#
-# T1_feature_scores = pd.concat(T1_feature_scores)
-# T2_feature_scores = pd.concat(T2_feature_scores)
-# Vol_feature_scores = pd.concat(Vol_feature_scores)
-#
-# # T1_feature_scores.to_csv('T1_features.csv')
-# # T2_feature_scores.to_csv('T2_features.csv')
-# # Vol_feature_scores.to_csv('Vol_features.csv')
-#
-# print ' '
-# print 'Cross-Valdation Score: ', curr_mean
-# print 'With a standard deviation of: ', curr_std
 tim = time.time() - start_time
 print 'This took', tim, 'seconds to run.'
 print 'Or', tim/60, 'minutes to run'
 print 'Or', tim/3600, 'hours to run'
-#
-# plt.figure(1)
-# plt.scatter(pred, testing_labels, c='b', label='Prediction')
-# plt.plot([0, 50], [0, 50], '--k')
-# plt.xlabel('Data')
-# plt.ylabel('Target')
-# plt.xlim([28, 45])
-# plt.ylim([25, 50])
-# plt.title('Random Forest Regression')
-# plt.legend()
-# plt.show()
+os.system('play --no-show-progress --null -- channels 1 synth %s sin %f' % (1, 550))
