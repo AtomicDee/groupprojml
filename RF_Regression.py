@@ -21,7 +21,8 @@ all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
 
 depth = [3, 5, 7, 9, 11, 15, 17, 19, 21] # 11(.score()) # 15(cross_val_score())
 estim = [30, 50, 100, 300, 500, 800, 1000] # 100(.score()) # 300(cross_val_score())
-training_size = [0.5, 0.7, 0.8, 0.9]
+# training_size = [0.5, 0.7, 0.8, 0.9]
+training_size = [0.9]
 
 curr_max = -10000
 curr_max_std = -10000
@@ -34,7 +35,7 @@ all_best_std = []
 all_best_oob = []
 max_oob = -10000
 
-for x in range(25):
+for x in range(5):
     for k in range(len(training_size)):
         training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size[k])
         testing_data = testing_data[testing_data.columns[1:]]

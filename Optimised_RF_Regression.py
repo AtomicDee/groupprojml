@@ -12,9 +12,9 @@ ScanAge = pd.read_csv(path + '/ScanGA.csv')
 BirthAge = pd.read_csv(path + '/BirthGA.csv')
 all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
 
-best_depth = 9 # 8.5 depth
-best_estim = 240 # 240 Estims
-training_size = 0.62 # 0.62 training size
+best_depth = 9 # 13.4 depth OOB
+best_estim = 240 # 585 Estims OOB
+training_size = 0.62 # 0.53 training size OOB
 testing_size = 1 - training_size
 
 training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size, test_size=testing_size)
