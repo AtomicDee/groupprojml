@@ -35,14 +35,18 @@ ScanAge = pd.read_csv(path+'ScanAge.csv')
 print 'Shape SA : ', ScanAge.shape
 Gender = pd.read_csv(path+'Gender.csv')
 print 'Shape Gender : ', Gender.shape
+Term_labels = pd.read_csv(path+'Term_labels.csv')
 
-T1 = T1[T1.columns[2:]]
+Term_labels = Term_labels[Term_labels.columns[1]]
+T1 = T1[T1.columns[1:]]
 Gender = Gender[Gender.columns[1]]
-T2 = T2[T2.columns[2:]]
+Volume = Volume[Volume.columns[1]]
+T2 = T2[T2.columns[1:]]
 SA = ScanAge[ScanAge.columns[1]]
 
-T = pd.concat([T1, T2], axis = 1)
-print T.shape
+features = pd.concat([T1, T2, Volume], axis = 1)
+print features.shape
+
 # for row in T1.itertuples():
 #     if i % 2 == 0:
 #         train_t1.append(pd.DataFrame([row]))
@@ -55,10 +59,10 @@ testing_data = []
 training_labels = []
 testing_labels = []
 
-training_data, testing_data, training_labels, testing_labels = train_test_split(T, Gender, train_size=0.5)
-print 'traind data : ', len(training_data), 'train lab : ', len(training_labels)
+training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=0.5)
+print 'train data : ', len(training_data), 'train lab : ', len(training_labels)
 clf = AdaBoostClassifier(n_estimators = 6000)
 classed = clf.fit(training_data, training_labels)
-scores = cross_val_score(clf, T, Gender, cv=5)
+scores = cross_val_score(clf, features, Term_labels, cv=5)
 print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print 'basic score : ', clf.score(testing_data, testing_labels)
