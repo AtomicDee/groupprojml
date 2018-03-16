@@ -34,103 +34,74 @@ data = pd.concat([T1, T2, Vol], axis = 1)
 print data.shape
 labels = SA
 
-training_data, testing_data, training_labels, testing_labels = train_test_split(data, labels, train_size=0.8)
+N_est = [1, 10, 50, 100, 300]
+ts = [0.2, 0.5, 0.8]
+i = 0
+j = 0
+fig, ax = plt.subplots(5, 3)
+fig, axes = plt.subplots(5, 3)
+for n in N_est :
+    for t in ts :
 
-# Fit regression model
-regr_1 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4), random_state=rng)
+        training_data, testing_data, training_labels, testing_labels = train_test_split(data, labels, train_size=t)
 
-regr_2 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-                          n_estimators=150, random_state=rng)
+        # Fit regression model
+        regr = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
+                                  n_estimators=150, random_state=rng)
+        regr.fit(training_data, training_labels)
 
-regr_3 = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-                          n_estimators=300, random_state=rng)
+        # Predict
+        y = regr.predict(training_data)
+        z = regr.predict(testing_data)
+        sy = regr.score(training_data, training_labels)
+        sz = regr.score(testing_data, testing_labels)
 
-regr_1.fit(training_data, training_labels)
-regr_2.fit(training_data, training_labels)
-regr_3.fit(training_data, training_labels)
+        print ' '
+        print 'Training scores --> n_est = %0.2f , ts = %0.2f : ' % (n, t), sy
+        print 'Testing scores --> n_est = %0.2f , ts = %0.2f: '% (n, t), sz
+        print ' '
 
+        scores_z = cross_val_score(regr, testing_data, testing_labels)
+        scores_y = cross_val_score(regr, training_data, training_labels)
+        print ' accuracy training: %0.2f (+/- %0.2f) ' % (scores_y.mean(), scores_y.std() *2)
+        print ' accuracy testing: %0.2f (+/- %0.2f) ' % (scores_z.mean(), scores_z.std() *2)
 
+        # list_labels = np.concatenate(training_labels.values).ravel().tolist()
 
+        # Plot the results
 
-# Predict
-y_1 = regr_1.predict(training_data)
-print y_1.shape
-y_2 = regr_2.predict(training_data)
-y_3 = regr_3.predict(training_data)
+        print i, j
+        axes[i,j].scatter(training_labels, y, c="g", label="n_estimators=%0.2f" % n, linewidth=2)
+        axes[i,j].set_title("train n :%0.2f ts:%0.2f" % (n, t))
 
-z_1 = regr_1.predict(testing_data)
-z_2 = regr_2.predict(testing_data)
-z_3 = regr_3.predict(testing_data)
-
-
-sy_1 = regr_1.score(training_data, training_labels)
-sy_2 = regr_2.score(training_data, training_labels)
-sy_3 = regr_3.score(training_data, training_labels)
-
-sz_1 = regr_1.score(testing_data, testing_labels)
-sz_2 = regr_2.score(testing_data, testing_labels)
-sz_3 = regr_3.score(testing_data, testing_labels)
-
-print ' '
-print 'Training scores --> n_est = 1 : ', sy_1, ' n_est = 300 : ', sy_2, ' n_est = 1000 : ', sy_3
-print 'Testing scores --> n_est = 1 : ', sz_1, ' n_est = 300 : ', sz_2, ' n_est = 1000 : ', sz_3
-print ' '
-# data to list
-
-scores_z1 = cross_val_score(regr_1, testing_data, testing_labels)
-scores_z2 = cross_val_score(regr_2, testing_data, testing_labels)
-scores_z3 = cross_val_score(regr_3, testing_data, testing_labels)
-
-scores_y1 = cross_val_score(regr_1, training_data, training_labels)
-scores_y2 = cross_val_score(regr_2, training_data, training_labels)
-scores_y3 = cross_val_score(regr_3, training_data, training_labels)
-print ' accuracy z1: %0.2f (+/- %0.2f) ' % (scores_z1.mean(), scores_z1.std() *2)
-print ' accuracy z2: %0.2f (+/- %0.2f) ' % (scores_z2.mean(), scores_z2.std() *2)
-print ' accuracy z3: %0.2f (+/- %0.2f) ' % (scores_z3.mean(), scores_z3.std() *2)
-print ' accuracy y1: %0.2f (+/- %0.2f) ' % (scores_y1.mean(), scores_y1.std() *2)
-print ' accuracy y2: %0.2f (+/- %0.2f) ' % (scores_y2.mean(), scores_y2.std() *2)
-print ' accuracy y3: %0.2f (+/- %0.2f) ' % (scores_y3.mean(), scores_y3.std() *2)
-
-# list_labels = np.concatenate(training_labels.values).ravel().tolist()
-
-# Plot the results
-plt.figure()
-plt.scatter(training_labels, y_1, c="g", label="n_estimators=1", linewidth=2)
-plt.scatter(training_labels, y_2, c="r", label="n_estimators=300", linewidth=2)
-plt.scatter(training_labels, y_3, c="b", label="n_estimators=1000", linewidth=2)
-plt.xlabel("data")
-plt.ylabel("Predictions")
-plt.title("training data")
-plt.legend()
-
-plt.figure()
-plt.scatter(testing_labels, z_1, c="g", label="n_estimators=1", linewidth=2)
-plt.scatter(testing_labels, z_2, c="r", label="n_estimators=300", linewidth=2)
-plt.scatter(testing_labels, z_3, c="b", label="n_estimators=1000", linewidth=2)
-plt.xlabel("data")
-plt.ylabel("Predictions")
-plt.title("Testing data")
-plt.legend()
+        ax[i,j].scatter(testing_labels, z, c="g", label="n_estimators=%0.2f" % n, linewidth=2)
+        ax[i,j].set_title("test n :%0.2f ts:%0.2f" % (n, t))
+        j+=1
+        if j > 2:
+            j=0
+    i+=1
+    if i>4:
+        i=0
 
 plt.show()
 
 # # feature extraction
-fi_3 = regr_3.feature_importances_
-print len(fi_3)
-
-T1_feature_scores = fi_3[:86]
-print len(T1_feature_scores)
-print type(T1_feature_scores)
-T2_feature_scores = fi_3[86:172]
-print len(T2_feature_scores)
-Vol_feature_scores = fi_3[172:]
-print len(Vol_feature_scores)
-
-df1 = pd.DataFrame(T1_feature_scores)
-df1.to_csv(path+"new_T1_300.csv", header=None, index=None)
-
-df2 = pd.DataFrame(T2_feature_scores)
-df2.to_csv(path+"new_T2_300.csv", header=None, index=None)
-
-df3 = pd.DataFrame(Vol_feature_scores)
-df3.to_csv(path+"new_Volume_300.csv", header=None, index=None)
+# fi_3 = regr_3.feature_importances_
+# print len(fi_3)
+#
+# T1_feature_scores = fi_3[:86]
+# print len(T1_feature_scores)
+# print type(T1_feature_scores)
+# T2_feature_scores = fi_3[86:172]
+# print len(T2_feature_scores)
+# Vol_feature_scores = fi_3[172:]
+# print len(Vol_feature_scores)
+#
+# df1 = pd.DataFrame(T1_feature_scores)
+# df1.to_csv(path+"new_T1_300.csv", header=None, index=None)
+#
+# df2 = pd.DataFrame(T2_feature_scores)
+# df2.to_csv(path+"new_T2_300.csv", header=None, index=None)
+#
+# df3 = pd.DataFrame(Vol_feature_scores)
+# df3.to_csv(path+"new_Volume_300.csv", header=None, index=None)
