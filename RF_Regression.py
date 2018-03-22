@@ -35,7 +35,7 @@ all_best_std = []
 all_best_oob = []
 max_oob = -10000
 
-for x in range(5):
+for x in range(15):
     for k in range(len(training_size)):
         training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size[k])
         testing_data = testing_data[testing_data.columns[1:]]

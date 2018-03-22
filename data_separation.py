@@ -8,13 +8,14 @@ import nibabel
 import csv
 import sys
 
-path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
-filename = 'Reformatted_data.csv'
+# path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
+path = '/home/avi/Desktop/'
+filename = 'PRETERM.csv'
 # The path where all the data is held
 
 data = pd.read_csv(path+filename)
 # Using pandas to read all the data in
-print data, data.shape
+# print data, data.shape
 T1 = []
 T2 = []
 Volume = []
@@ -23,32 +24,47 @@ SessID = []
 BirthAge = []
 ScanAge = []
 Gender = []
+Term = []
+T1_T2_Vol = []
 
 for row in data.itertuples():
     PatCode.append(pd.DataFrame([row[1]]))
-    # SessID.append(pd.DataFrame([row[2]]))
-    # BirthAge.append(pd.DataFrame([row[3]]))
-    # ScanAge.append(pd.DataFrame([row[5]]))
-    # Gender.append(pd.DataFrame([row[6]]))
-    # T1.append(pd.DataFrame([row[7:94]]))
-    # T2.append(pd.DataFrame([row[95:182]]))
-    # Volume.append(pd.DataFrame([row[183:270]]))
+    SessID.append(pd.DataFrame([row[2]]))
+    BirthAge.append(pd.DataFrame([row[3]]))
+    ScanAge.append(pd.DataFrame([row[4]]))
+    Term.append(pd.DataFrame([row[5]]))
+    Gender.append(pd.DataFrame([row[6]]))
+    T1.append(pd.DataFrame([row[7:93]]))
+    T2.append(pd.DataFrame([row[93:179]]))
+    Volume.append(pd.DataFrame([row[179:268]]))
+    T1_T2_Vol.append(pd.DataFrame([row[7:268]]))
+
+        # T1.append(pd.DataFrame([row[6:92]]))
+        # T2.append(pd.DataFrame([row[92:178]]))
+        # Volume.append(pd.DataFrame([row[178:267]]))
+        # all_feat.append(pd.DataFrame([row[6:267]]))
+    # print np.shape(T1)
+    # print np.shape(T2)
+    # print np.shape(Volume)
+    # raw_input()
 
 PatCode = pd.concat( PatCode )
+SessID = pd.concat( SessID )
+BirthAge = pd.concat( BirthAge )
+ScanAge = pd.concat( ScanAge )
+Gender = pd.concat( Gender )
+Term = pd.concat( Term )
 
-# SessID = pd.concat( SessID )
-# BirthAge = pd.concat( BirthAge )
-# ScanAge = pd.concat( ScanAge )
-# Gender = pd.concat( Gender )
-
-# T1 = pd.concat(T1)
+T1 = pd.concat(T1)
 # print 'shape t1 : ', T1.shape
-# T2 = pd.concat(T2)
+T2 = pd.concat(T2)
 # print 'shape t2 : ', T2.shape
-# Volume = pd.concat(Volume)
+Volume = pd.concat(Volume)
 # print 'shape vol : ', Volume.shape
+
+T1_T2_Vol = pd.concat(T1_T2_Vol)
 # Save all these separately
-PatCode.to_csv(os.path.join(path,'PatCode.csv'))
+# PatCode.to_csv(os.path.join(path,'PatCode.csv'))
 # SessID.to_csv(os.path.join(path,'SessID.csv'))
 # BirthAge.to_csv(os.path.join(path,'BirthAge.csv'))
 # ScanAge.to_csv(os.path.join(path,'ScanAge.csv'))
@@ -56,3 +72,13 @@ PatCode.to_csv(os.path.join(path,'PatCode.csv'))
 # T1.to_csv(os.path.join(path,'T1.csv'))
 # T2.to_csv(os.path.join(path,'T2.csv'))
 # Volume.to_csv(os.path.join(path,'Volume.csv'))
+
+PatCode.to_csv(os.path.join(path,'PatCode.csv'))
+SessID.to_csv(os.path.join(path,'SessID.csv'))
+BirthAge.to_csv(os.path.join(path,'BirthAge.csv'))
+ScanAge.to_csv(os.path.join(path,'ScanAge.csv'))
+Term.to_csv(os.path.join(path, 'Terms.csv'))
+Gender.to_csv(os.path.join(path,'Gender.csv'))
+T1.to_csv(os.path.join(path,'T1.csv'))
+T2.to_csv(os.path.join(path,'T2.csv'))
+Volume.to_csv(os.path.join(path,'Volume.csv'))
