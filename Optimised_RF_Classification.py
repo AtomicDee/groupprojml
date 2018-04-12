@@ -7,11 +7,20 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 
-path = '/home/avi/Desktop/groupprojml/DATA/All_Patients'
-ScanAge = pd.read_csv(path + '/ScanGA.csv')
-BirthAge = pd.read_csv(path + '/BirthGA.csv')
-all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
-Term_labels = pd.read_csv(path + '/Term_labels.csv')
+# path = '/home/avi/Desktop/groupprojml/DATA/All_Patients'
+path1 = '/home/avi/Desktop/groupprojml/DATA/Term_Patients'
+path2 = '/home/avi/Desktop/groupprojml/DATA/Preterm_Patients'
+# path = '/home/avi/Desktop/groupprojml/DATA/ALL_PATIENTS_NO_DUPLICATES'
+# ScanAge = pd.read_csv(path + '/ScanGA.csv')
+# BirthAge = pd.read_csv(path + '/BirthGA.csv')
+# all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
+# Term_labels = pd.read_csv(path + '/Term_labels.csv')
+term_ScanAge = pd.read_csv(path1 + '/ScanGA.csv')
+term_BirthAge = pd.read_csv(path1 + '/BirthGA.csv')
+term_all_feat = pd.read_csv(path1 + '/T1_T2_Vol.csv')
+preterm_ScanAge = pd.read_csv(path2 + '/ScanGA.csv')
+preterm_BirthAge = pd.read_csv(path2 + '/BirthGA.csv')
+preterm_all_feat = pd.read_csv(path2 + '/T1_T2_Vol.csv')
 
 best_depth = 11 # 13.4 depth OOB
 best_estim = 136
@@ -90,9 +99,15 @@ T1_feature_scores = pd.concat(T1_feature_scores)
 T2_feature_scores = pd.concat(T2_feature_scores)
 Vol_feature_scores = pd.concat(Vol_feature_scores)
 
-T1_feature_scores.to_csv('T1_features_RF_Clf.csv')
-T2_feature_scores.to_csv('T2_features_RF_Clf.csv')
-Vol_feature_scores.to_csv('Vol_features_RF_Clf.csv')
+# T1_feature_scores.to_csv('T1_features_RF_Clf.csv')
+# T2_feature_scores.to_csv('T2_features_RF_Clf.csv')
+# Vol_feature_scores.to_csv('Vol_features_RF_Clf.csv')
+
+
+xx, yy = np.meshgrid(np.arange(best_test_data, best_test_labels), np.arange(best_test_data, best_test_labels))
+Z = best_pred
+Z = Z.reshape(xx.shape)
+cs = plt.contourf(xx, yy, Z, cmap=cmap)
 
 # import os
 # import numpy as np

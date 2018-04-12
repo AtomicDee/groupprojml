@@ -9,12 +9,26 @@ from sklearn.model_selection import cross_val_score
 import time
 start_time = time.time()
 
-path = '/home/avi/Desktop/groupprojml/DATA/All_Patients'
+path = '/home/avi/Desktop/groupprojml/DATA/ALL_PATIENTS_NO_DUPLICATES'
 
 ScanAge = pd.read_csv(path + '/ScanGA.csv')
 BirthAge = pd.read_csv(path + '/BirthGA.csv')
 all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
 Term_labels = pd.read_csv(path + '/Term_labels.csv')
+
+# print(ScanAge)
+# raw_input()
+
+#
+# preterm_ScanAge = pd.read_csv(preterm_path + '/ScanGA.csv')
+# preterm_BirthAge = pd.read_csv(preterm_path + '/BirthGA.csv')
+# preterm_all_feat = pd.read_csv(preterm_path + '/T1_T2_Vol.csv')
+#
+# term_ScanAge = pd.read_csv(term_path + '/ScanGA.csv')
+# term_BirthAge = pd.read_csv(term_path + '/BirthGA.csv')
+# term_all_feat = pd.read_csv(term_path + '/T1_T2_Vol.csv')
+
+
 
 # the problem with setting some parameters too high is that it becomes overfit
 # to the training data, so that when being run the clf becomes crappy at fitting
@@ -33,12 +47,19 @@ all_best_estims = []
 all_best_scores = []
 all_best_cross_scores = []
 all_best_std = []
-all_best_oob = []
-max_oob = 1
 
-for x in range(15):
+for x in range(3):
     for k in range(len(training_size)):
         training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, Term_labels, train_size=training_size[k])
+        # print(np.shape(training_data))
+        # print(np.shape(training_labels))
+        # print(np.shape(testing_data))
+        # print(np.shape(testing_labels))
+        # raw_input()    # print(np.shape(training_data))
+        # print(np.shape(training_labels))
+        # print(np.shape(testing_data))
+        # print(np.shape(testing_labels))
+        # raw_input()
         # training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=0.5)
         testing_data = testing_data[testing_data.columns[1:]]
         testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
@@ -53,16 +74,13 @@ for x in range(15):
                 print 'Depth: ', depth[i]
                 print 'Estimator: ', estim[j]
                 clf = RandomForestClassifier(max_depth = depth[i], max_features = 16,
-                                            n_estimators = estim[j], oob_score=True)
+                                            n_estimators = estim[j])
                 clf.fit(training_data, training_labels)
                 curr_score = clf.score(testing_data, testing_labels)
                 curr_cross_score = cross_val_score(clf, testing_data, testing_labels)
                 curr_mean = np.mean(curr_cross_score)
                 curr_std = np.std(curr_cross_score)
-                curr_oob = clf.oob_score_
-                # if curr_oob > max_oob and curr_mean > curr_max:
                 if curr_mean > curr_max:
-                    max_oob = curr_oob
                     curr_cross_max = curr_mean
                     curr_max = curr_mean
                     curr_score_max = curr_score
@@ -76,7 +94,6 @@ for x in range(15):
     all_best_scores.append(curr_score_max)
     all_best_cross_scores.append(curr_cross_max)
     all_best_std.append(curr_max_std)
-    all_best_oob.append(max_oob)
     curr_cross_max = 0
     curr_score_max
     curr_max = 0
@@ -84,7 +101,6 @@ for x in range(15):
     best_depth = 0
     best_estim = 0
     best_size = 0
-    max_oob = 0
 
 print ' '
 print '########################################################################'
@@ -94,7 +110,6 @@ print 'The best score is: ', np.mean(all_best_scores)
 print 'The optimal depth found was: ', np.mean(all_best_depths)
 print 'The optimal number of estimators was found to be: ', np.mean(all_best_estims)
 print 'The best training size is: ', np.mean(all_best_sizes)
-print 'The best OOB score is: ', np.mean(all_best_oob)
 print '########################################################################'
 print ' '
 print '########################################################################'
@@ -104,7 +119,6 @@ print 'All scores: ', all_best_scores
 print 'All depths: ', all_best_depths
 print 'All estimators: ', all_best_estims
 print 'All training sizes: ', all_best_sizes
-print 'All OOB scores: ', all_best_oob
 print '########################################################################'
 print ' '
 
