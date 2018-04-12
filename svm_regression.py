@@ -10,7 +10,8 @@ import csv
 import os
 ####################################################
 # import some data to play with
-path = '/Volumes/Harddrive_MS/Group_Project_Meng/DATA/All_Patients/'
+# path = '/Volumes/Harddrive_MS/Group_Project_Meng/DATA/All_Patients/'
+path = '/home/avi/Desktop/groupprojml/DATA/All_Patients/'
 T1= 'T1.csv'
 T1 = pd.read_csv(path+T1)
 print np.shape(T1)
@@ -40,13 +41,13 @@ all_Feat = all_Feat[all_Feat.columns[1:]]
 ####################################################
 #RANDOM FOREST
 
-path_feat = '/Volumes/Harddrive_MS/Group_Project_Meng/Features/'
-'''
-t1f = 'T1_features_sorted.csv'
-t2f = 'T2_features.csv'
-volf = 'Vol_features.csv'
-T1f = pd.read_csv(path_feat+t1f)
-'''
+path_feat = '/home/avi/Desktop/'
+# ''
+# t1f = 'T1_features_sorted.csv'
+# t2f = 'T2_features.csv'
+# volf = 'Vol_features.csv'
+# T1f = pd.read_csv(path_feat+t1f)
+# ''
 #####################################################
 #ADABOOST
 
@@ -98,44 +99,44 @@ X, X_test, y, y_test = train_test_split(x_all, y_all,train_size=0.9,random_state
 
 
 
-'''
-print len(X)
-print len(y)
-y = np.ravel(y)
-c = [1e-10, 1e-7, 2e-7, 3e-7, 4e-7, 5e-7, 6e-7, 9e-7, 1e-6, 2e-6, 3e-6, 4e-6, 7e-6, 8e-6]
-gam = [1e1, 1e2, 1e3,2e3,4e3,5e3,7e3,9e3]
-max_sc_lin = 0
-max_sc_rbf = 0
-max_sc_poly = 0
-ind_i_rbf = 0
-ind_j_rbf = 0
-for i in range(len(gam)):
-    for j in range(len(c)):
-        print c[j]
-        print gam[i]
-        svr_rbf = SVR(kernel='rbf',C=c[j],gamma = gam[i])
-        svr_rbf.fit(X,y)
-        pre_rbf = svr_rbf.predict(X_test)
-
-        #scores_y1 = cross_val_score(svr_rbf, X_test, y_test)
-        #print scores_y1.mean(), scores_y1.std()
-
-        sc_rbf = svr_rbf.score(X_test,y_test)
-        print sc_rbf
-
-        if sc_rbf > max_sc_rbf:
-            max_sc_rbf = sc_rbf
-            print 'R'
-            print max_sc_rbf
-            ind_i_rbf = i
-            ind_j_rbf = j
-
-
+''
+# print len(X)
+# print len(y)
+# y = np.ravel(y)
+# c = [1e-10, 1e-7, 2e-7, 3e-7, 4e-7, 5e-7, 6e-7, 9e-7, 1e-6, 2e-6, 3e-6, 4e-6, 7e-6, 8e-6]
+# gam = [1e1, 1e2, 1e3,2e3,4e3,5e3,7e3,9e3]
+# max_sc_lin = 0
+# max_sc_rbf = 0
+# max_sc_poly = 0
+# ind_i_rbf = 0
+# ind_j_rbf = 0
+# for i in range(len(gam)):
+#     for j in range(len(c)):
+#         print c[j]
+#         print gam[i]
+#         svr_rbf = SVR(kernel='rbf',C=c[j],gamma = gam[i])
+#         svr_rbf.fit(X,y)
+#         pre_rbf = svr_rbf.predict(X_test)
+#
+#         #scores_y1 = cross_val_score(svr_rbf, X_test, y_test)
+#         #print scores_y1.mean(), scores_y1.std()
+#
+#         sc_rbf = svr_rbf.score(X_test,y_test)
+#         print sc_rbf
+#
+#         if sc_rbf > max_sc_rbf:
+#             max_sc_rbf = sc_rbf
+#             print 'R'
+#             print max_sc_rbf
+#             ind_i_rbf = i
+#             ind_j_rbf = j
 
 
-print 'R',ind_i_rbf
-print ind_j_rbf
-print max_sc_rbf'''
+
+#
+# print 'R',ind_i_rbf
+# print ind_j_rbf
+# print max_sc_rbf
 
 # #############################################################################
 
@@ -148,7 +149,7 @@ pre = svr.predict(X_test)
 new_s =svr.score(X_test,y_test)
 para_results = svr.cv_results_
 para_best = svr.best_params_
-para_score = svr.
+# para_score = svr.
 print para_results
 print para_best
 
@@ -158,14 +159,14 @@ print 's', new_s, new_sc
 ###############################################################################
 
 '''
-svrl = GridSearchCV(SVR(kernel='linear'), cv=5,
-                   param_grid={"C": [1,10,100,1000])})
-svrl.fit(X,y)
-prel = svrl.predict(X_test)
-new_sl =svrl.score(X_test,y_test)
-new_scl = cross_val_score(svrl,X_test,y_test)
-new_scl = sum(new_scl) / float(len(new_scl))
-print 'sline', new_sl, new_scl
+# svrl = GridSearchCV(SVR(kernel='linear'), cv=5,
+#                    param_grid={"C": [1,10,100,1000])})
+# svrl.fit(X,y)
+# prel = svrl.predict(X_test)
+# new_sl =svrl.score(X_test,y_test)
+# new_scl = cross_val_score(svrl,X_test,y_test)
+# new_scl = sum(new_scl) / float(len(new_scl))
+# print 'sline', new_sl, new_scl
 '''
 
 

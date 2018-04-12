@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn import tree
 import matplotlib.pyplot as plt
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 import time
@@ -14,6 +14,7 @@ path = '/home/avi/Desktop/groupprojml/DATA/All_Patients'
 ScanAge = pd.read_csv(path + '/ScanGA.csv')
 BirthAge = pd.read_csv(path + '/BirthGA.csv')
 all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
+Term_labels = pd.read_csv(path + '/Term_labels.csv')
 
 # the problem with setting some parameters too high is that it becomes overfit
 # to the training data, so that when being run the clf becomes crappy at fitting
@@ -37,7 +38,8 @@ max_oob = 1
 
 for x in range(15):
     for k in range(len(training_size)):
-        training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size[k])
+        training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, Term_labels, train_size=training_size[k])
+        # training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=0.5)
         testing_data = testing_data[testing_data.columns[1:]]
         testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
         training_data = training_data[training_data.columns[1:]]
@@ -50,15 +52,15 @@ for x in range(15):
                 print 'Training Size: ', training_size[k]
                 print 'Depth: ', depth[i]
                 print 'Estimator: ', estim[j]
-                regr = RandomForestRegressor(max_depth = depth[i], max_features = 16,
+                clf = RandomForestClassifier(max_depth = depth[i], max_features = 16,
                                             n_estimators = estim[j], oob_score=True)
-                regr.fit(training_data, training_labels)
-                curr_score = regr.score(testing_data, testing_labels)
-                curr_cross_score = cross_val_score(regr, testing_data, testing_labels)
+                clf.fit(training_data, training_labels)
+                curr_score = clf.score(testing_data, testing_labels)
+                curr_cross_score = cross_val_score(clf, testing_data, testing_labels)
                 curr_mean = np.mean(curr_cross_score)
                 curr_std = np.std(curr_cross_score)
-                curr_oob = regr.oob_score_
-                # if curr_oob < max_oob and curr_mean > curr_max:
+                curr_oob = clf.oob_score_
+                # if curr_oob > max_oob and curr_mean > curr_max:
                 if curr_mean > curr_max:
                     max_oob = curr_oob
                     curr_cross_max = curr_mean
@@ -68,8 +70,6 @@ for x in range(15):
                     best_depth = depth[i]
                     best_estim = estim[j]
                     best_size = training_size[k]
-                    print 'OOB: ', max_oob
-                    print 'Curr Score: ', curr_max
     all_best_sizes.append(best_size)
     all_best_depths.append(best_depth)
     all_best_estims.append(best_estim)
