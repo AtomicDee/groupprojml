@@ -8,27 +8,23 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 import time
 start_time = time.time()
-
-path = '/home/avi/Desktop/groupprojml/DATA/ALL_PATIENTS_NO_DUPLICATES'
-
-ScanAge = pd.read_csv(path + '/ScanGA.csv')
-BirthAge = pd.read_csv(path + '/BirthGA.csv')
-all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
-Term_labels = pd.read_csv(path + '/Term_labels.csv')
-
-# print(ScanAge)
-# raw_input()
-
 #
-# preterm_ScanAge = pd.read_csv(preterm_path + '/ScanGA.csv')
-# preterm_BirthAge = pd.read_csv(preterm_path + '/BirthGA.csv')
-# preterm_all_feat = pd.read_csv(preterm_path + '/T1_T2_Vol.csv')
-#
-# term_ScanAge = pd.read_csv(term_path + '/ScanGA.csv')
-# term_BirthAge = pd.read_csv(term_path + '/BirthGA.csv')
-# term_all_feat = pd.read_csv(term_path + '/T1_T2_Vol.csv')
+# path = '/home/avi/Desktop/groupprojml/DATA/ALL_PATIENTS_NO_DUPLICATES'
+# ScanAge = pd.read_csv(path + '/ScanGA.csv')
+# BirthAge = pd.read_csv(path + '/BirthGA.csv')
+# all_feat = pd.read_csv(path + '/T1_T2_Vol.csv')
+# Term_labels = pd.read_csv(path + '/Term_labels.csv')
 
-
+path1 = '/home/avi/Desktop/Term_Data'
+path2 = '/home/avi/Desktop/Preterm_Data'
+term_ScanAge = pd.read_csv(path1 + '/ScanGA.csv')
+term_BirthAge = pd.read_csv(path1 + '/BirthGA.csv')
+term_all_feat = pd.read_csv(path1 + '/T1_T2_Vol.csv')
+term_labels = pd.read_csv(path1 + '/Term_labels.csv')
+preterm_ScanAge = pd.read_csv(path2 + '/ScanGA.csv')
+preterm_BirthAge = pd.read_csv(path2 + '/BirthGA.csv')
+preterm_all_feat = pd.read_csv(path2 + '/T1_T2_Vol.csv')
+preterm_labels = pd.read_csv(path2 + '/Term_labels.csv')
 
 # the problem with setting some parameters too high is that it becomes overfit
 # to the training data, so that when being run the clf becomes crappy at fitting
@@ -36,8 +32,8 @@ Term_labels = pd.read_csv(path + '/Term_labels.csv')
 
 depth = [3, 5, 7, 9, 11, 15, 17, 19, 21] # 11(.score()) # 15(cross_val_score())
 estim = [30, 50, 100, 300, 500, 800, 1000] # 100(.score()) # 300(cross_val_score())
-training_size = [0.5, 0.7, 0.8, 0.9]
-# training_size = [0.9]
+# training_size = [0.5, 0.7, 0.8, 0.9]
+training_size = [0.9]
 
 curr_max = -10000
 curr_max_std = -10000
@@ -48,23 +44,23 @@ all_best_scores = []
 all_best_cross_scores = []
 all_best_std = []
 
-for x in range(3):
+testing_data = preterm_all_feat
+testing_labels = preterm_labels
+training_data = term_all_feat
+training_labels = term_labels
+testing_data = testing_data[testing_data.columns[1:]]
+testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
+training_data = training_data[training_data.columns[1:]]
+training_labels = np.ravel(training_labels[training_labels.columns[1:]])
+
+for x in range(1):
     for k in range(len(training_size)):
-        training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, Term_labels, train_size=training_size[k])
-        # print(np.shape(training_data))
-        # print(np.shape(training_labels))
-        # print(np.shape(testing_data))
-        # print(np.shape(testing_labels))
-        # raw_input()    # print(np.shape(training_data))
-        # print(np.shape(training_labels))
-        # print(np.shape(testing_data))
-        # print(np.shape(testing_labels))
-        # raw_input()
-        # training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=0.5)
-        testing_data = testing_data[testing_data.columns[1:]]
-        testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
-        training_data = training_data[training_data.columns[1:]]
-        training_labels = np.ravel(training_labels[training_labels.columns[1:]])
+        # training_data, testing_data, training_labels, testing_labels =
+        #     train_test_split(all_feat, Term_labels, train_size=training_size[k])
+        # testing_data = testing_data[testing_data.columns[1:]]
+        # testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
+        # training_data = training_data[training_data.columns[1:]]
+        # training_labels = np.ravel(training_labels[training_labels.columns[1:]])
         for i in range(len(depth)):
             curr_score = []
             for j in range(len(estim)):
