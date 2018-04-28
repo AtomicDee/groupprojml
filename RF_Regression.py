@@ -46,10 +46,12 @@ term_all_BirthGA = pd.read_csv(term_path + 'BirthGA.csv')
 # to the training data, so that when being run the clf becomes crappy at fitting
 # test data
 
-depth = [3, 5, 7, 9, 11, 15, 17, 19, 21] # 11(.score()) # 15(cross_val_score())
-estim = [30, 50, 100, 300, 500, 800, 1000] # 100(.score()) # 300(cross_val_score())
-training_size = [0.5, 0.7, 0.8, 0.9]
-# training_size = [0.9]
+# depth = [3, 5, 7, 9, 11, 15, 17, 19, 21] # 11(.score()) # 15(cross_val_score())
+# estim = [30, 50, 100, 300, 500, 800, 1000] # 100(.score()) # 300(cross_val_score())
+# training_size = [0.5, 0.7, 0.8, 0.9]
+depth = [3, 5, 7, 9]
+estim = [30, 50, 100, 300]
+training_size = [0.9]
 
 curr_max = -10000
 curr_max_std = -10000
@@ -62,22 +64,22 @@ all_best_std = []
 all_best_oob = []
 max_oob = 1
 
-testing_data = preterm_all_feat
-testing_labels = preterm_ScanAge
-training_data = term_all_feat
-training_labels = term_ScanAge
-testing_data = testing_data[testing_data.columns[1:]]
-testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
-training_data = training_data[training_data.columns[1:]]
-training_labels = np.ravel(training_labels[training_labels.columns[1:]])
+# testing_data = preterm_all_feat
+# testing_labels = preterm_ScanAge
+# training_data = term_all_feat
+# training_labels = term_ScanAge
+# testing_data = testing_data[testing_data.columns[1:]]
+# testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
+# training_data = training_data[training_data.columns[1:]]
+# training_labels = np.ravel(training_labels[training_labels.columns[1:]])
 
-for x in range(1):
+for x in range(3):
     for k in range(len(training_size)):
-        # training_data, testing_data, training_labels, testing_labels = train_test_split(all_feat, ScanAge, train_size=training_size[k])
-        # testing_data = testing_data[testing_data.columns[1:]]
-        # testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
-        # training_data = training_data[training_data.columns[1:]]
-        # training_labels = np.ravel(training_labels[training_labels.columns[1:]])
+        training_data, testing_data, training_labels, testing_labels = train_test_split(all_data_all_features, all_data_all_BirthGA, train_size=training_size[k])
+        testing_data = testing_data[testing_data.columns[1:]]
+        testing_labels = np.ravel(testing_labels[testing_labels.columns[1:]])
+        training_data = training_data[training_data.columns[1:]]
+        training_labels = np.ravel(training_labels[training_labels.columns[1:]])
         for i in range(len(depth)):
             curr_score = []
             for j in range(len(estim)):
@@ -98,7 +100,7 @@ for x in range(1):
 
                 curr_score = regr.score(testing_data, testing_labels)
                 curr_cross_score = cross_val_score(regr, testing_data, testing_labels)
-                curr_mean = np.mean(curr_cross_score)
+                curr_mean = curr_cross_score.mean()
                 # print(curr_score)
                 # print(curr_mean)
                 # raw_input()
@@ -158,6 +160,7 @@ for x in range(1):
 print ' '
 print '########################################################################'
 print 'The best cross score found was: ', np.mean(all_best_cross_scores)
+print 'all cross scores: ', all_best_cross_scores
 print 'With a STD of: ', np.mean(all_best_std)
 print 'The best score is: ', np.mean(all_best_scores)
 print 'The optimal depth found was: ', np.mean(all_best_depths)
