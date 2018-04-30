@@ -17,7 +17,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 # X, y = make_gaussian_quantiles(n_samples=1000, n_features=10,
 #                                n_classes=3, random_state=1)
-path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
+path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/ALL_PATIENTS_NO_DUPLICATES/"
 
 T1 = pd.read_csv(path+'T1.csv')
 print 'Shape T1 : ', T1.shape
@@ -29,40 +29,95 @@ PatCode = pd.read_csv(path+'PatCode.csv')
 print 'Shape PatCode : ', PatCode.shape
 SessID = pd.read_csv(path+'SessID.csv')
 print 'Shape SessID : ', SessID.shape
-BirthAge = pd.read_csv(path+'BirthAge.csv')
+BirthAge = pd.read_csv(path+'BirthGA.csv')
 print 'Shape BA : ', BirthAge.shape
-ScanAge = pd.read_csv(path+'ScanAge.csv')
+ScanAge = pd.read_csv(path+'ScanGA.csv')
 print 'Shape SA : ', ScanAge.shape
 Gender = pd.read_csv(path+'Gender.csv')
 print 'Shape Gender : ', Gender.shape
 Term_labels = pd.read_csv(path+'Term_labels.csv')
 
-Term_labels = Term_labels[Term_labels.columns[1]]
-T1 = T1[T1.columns[1:]]
-Gender = Gender[Gender.columns[1]]
-Volume = Volume[Volume.columns[1]]
-T2 = T2[T2.columns[1:]]
-SA = ScanAge[ScanAge.columns[1]]
+T1 = T1[T1.columns[2:]]
+T2 = T2[T2.columns[2:]]
+Volume = Volume[Volume.columns[2:]]
+SA = ScanAge[ScanAge.columns[2]]
+BA = BirthAge[BirthAge.columns[2]]
+PatCode = PatCode[PatCode.columns[2]]
+SessID = SessID[SessID.columns[2]]
+Gender = Gender[Gender.columns[2]]
+Term_labels = Term_labels[Term_labels.columns[2]]
 
 features = pd.concat([T1, T2, Volume], axis = 1)
 print features.shape
-
-# for row in T1.itertuples():
-#     if i % 2 == 0:
-#         train_t1.append(pd.DataFrame([row]))
-#     else:
-#         test_t1.append(pd.DataFrame([row]))
-#         i += 1
 
 training_data = []
 testing_data = []
 training_labels = []
 testing_labels = []
 
-training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=0.5)
-print 'train data : ', len(training_data), 'train lab : ', len(training_labels)
-clf = AdaBoostClassifier(n_estimators = 6000)
-classed = clf.fit(training_data, training_labels)
-scores = cross_val_score(clf, features, Term_labels, cv=5)
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-print 'basic score : ', clf.score(testing_data, testing_labels)
+training_scores = np.zeros((5,3))
+training_accuracy = np.zeros((5,3))
+train_std = np.zeros((5,3))
+testing_scores = np.zeros((5,3))
+testing_accuracy = np.zeros((5,3))
+test_std = np.zeros((5,3))
+
+rng = np.random.RandomState(1)
+
+N_est = [1, 10, 50, 100, 300]
+ts = [0.5, 0.7, 0.9]
+i = 0
+j = 0
+for n in N_est:
+    for t in ts :
+        training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=t, random_state=rng)
+        print 'train data : ', len(training_data), 'train lab : ', len(training_labels)
+
+        clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=2),
+                                  n_estimators=n, random_state=rng)
+
+        clf.fit(training_data, training_labels)
+
+        y = (clf.predict(training_data))
+        z = (clf.predict(testing_data))
+        sy = (clf.score(training_data, training_labels))
+        sz = (clf.score(testing_data, testing_labels))
+
+        training_scores[i][j] = sy
+        testing_scores[i][j] = sz
+
+        print ' '
+        print 'Training scores --> n_est = %0.2f , ts = %0.2f : ' % (n, t), sy
+        print 'Testing scores --> n_est = %0.2f , ts = %0.2f: '% (n, t), sz
+        print ' '
+
+        cv_test = (cross_val_score(clf, testing_data, testing_labels))
+        cv_train = (cross_val_score(clf, training_data, training_labels))
+
+        print ' accuracy training: %0.2f (+/- %0.2f) ' % (cv_train.mean(), cv_train.std() *2)
+        print ' accuracy testing: %0.2f (+/- %0.2f) ' % (cv_test.mean(), cv_test.std() *2)
+        training_accuracy[i][j] = cv_train.mean()
+        testing_accuracy[i][j] = cv_test.mean()
+        train_std[i][j] = cv_train.std()
+        test_std[i][j] = cv_test.std()
+        # print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+        # print 'basic score : ', clf.score(testing_data, testing_labels)
+        j+=1
+        if j > 2:
+            j=0
+    i+=1
+    if i>4:
+        i=0
+
+print 'training scores final'
+print training_scores
+print 'testing scores final'
+print testing_scores
+print 'training accuracy final'
+print training_accuracy
+print 'testing accuracy final'
+print testing_accuracy
+print 'training std'
+print train_std
+print 'testing std'
+print test_std
