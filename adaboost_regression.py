@@ -14,40 +14,58 @@ from sklearn.model_selection import train_test_split
 # max max_depth
 # n estimators
 
-path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
+path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/ALL_PATIENTS_NO_DUPLICATES/"
 T1 = pd.read_csv(path+'T1.csv')
-#print T1
-#raw_input('press ENTER to continue')
 T2 = pd.read_csv(path+'T2.csv')
 Volume = pd.read_csv(path+'Volume.csv')
 BirthAge = pd.read_csv(path+'BirthGA.csv')
 ScanAge = pd.read_csv(path+'ScanGA.csv')
 
-T1 = T1[T1.columns[1:]]
-T2 = T2[T2.columns[1:]]
-Vol = Volume[Volume.columns[1:]]
-SA = ScanAge[ScanAge.columns[1]]
-BA = BirthAge[BirthAge.columns[1]]
+
+T1 = T1[T1.columns[2:]]
+T2 = T2[T2.columns[2:]]
+Vol = Volume[Volume.columns[2:]]
+SA = ScanAge[ScanAge.columns[2]]
+BA = BirthAge[BirthAge.columns[2]]
 
 rng = np.random.RandomState(1)
-data = pd.concat([T1, T2, Vol], axis = 1)
-print data.shape
-labels = SA
+data = pd.concat([T1, T2, Vol, SA], axis = 1)
+labels = BA
 
 N_est = [1, 10, 50, 100, 300]
-ts = [0.2, 0.5, 0.8]
+ts = [0.5, 0.7, 0.9]
 i = 0
 j = 0
+
+training_scores = np.zeros((5,3))
+training_accuracy = np.zeros((5,3))
+train_std = np.zeros((5,3))
+testing_scores = np.zeros((5,3))
+testing_accuracy = np.zeros((5,3))
+test_std = np.zeros((5,3))
+
+
+best_features = []
+last_cv = 0;
+feature_set = ()
+best_set = ()
+best_train_test = []
+
+
+worst_cv = 99999
+worst_set = ()
+worst_train_test = []
+
+
 fig, ax = plt.subplots(5, 3)
 fig, axes = plt.subplots(5, 3)
 for n in N_est :
     for t in ts :
 
-        training_data, testing_data, training_labels, testing_labels = train_test_split(data, labels, train_size=t)
-
+        training_data, testing_data, training_labels, testing_labels = train_test_split(data, labels, train_size=t, random_state=42)
         # Fit regression model
         regr = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-                                  n_estimators=150, random_state=rng)
+                                  n_estimators=n, random_state=rng)
         regr.fit(training_data, training_labels)
 
         # Predict
@@ -55,6 +73,9 @@ for n in N_est :
         z = regr.predict(testing_data)
         sy = regr.score(training_data, training_labels)
         sz = regr.score(testing_data, testing_labels)
+
+        training_scores[i][j] = sy
+        testing_scores[i][j] = sz
 
         print ' '
         print 'Training scores --> n_est = %0.2f , ts = %0.2f : ' % (n, t), sy
@@ -65,6 +86,25 @@ for n in N_est :
         scores_y = cross_val_score(regr, training_data, training_labels)
         print ' accuracy training: %0.2f (+/- %0.2f) ' % (scores_y.mean(), scores_y.std() *2)
         print ' accuracy testing: %0.2f (+/- %0.2f) ' % (scores_z.mean(), scores_z.std() *2)
+
+        training_accuracy[i][j] = scores_y.mean()
+        testing_accuracy[i][j] = scores_z.mean()
+        train_std[i][j] = scores_y.std()
+        test_std[i][j] = scores_z.std()
+
+        length_set = [len(training_labels)]
+
+        if scores_z.mean() > last_cv :
+            best_features = regr.feature_importances_
+            last_cv = scores_z.mean()
+            feature_set = (n,t)
+            best_set = (n,t)
+            best_train_test = np.concatenate((length_set, training_labels, y, testing_labels, z))
+
+        if scores_z.mean() < worst_cv :
+            worst_cv = scores_z.mean()
+            worst_set = (n,t)
+            worst_train_test = np.concatenate((length_set, training_labels, y, testing_labels, z))
 
         # list_labels = np.concatenate(training_labels.values).ravel().tolist()
 
@@ -84,6 +124,32 @@ for n in N_est :
         i=0
 
 plt.show()
+
+print 'training scores final'
+print training_scores
+print 'testing scores final'
+print testing_scores
+print 'training accuracy final'
+print training_accuracy
+print 'testing accuracy final'
+print testing_accuracy
+print 'training std'
+print train_std
+print 'testing std'
+print test_std
+
+
+zeros = np.zeros((5,1));
+conc = np.concatenate((training_scores, zeros, testing_scores, zeros, training_accuracy, zeros, testing_accuracy, zeros, train_std, zeros, test_std), axis = 1)
+np.savetxt('all_scores_reduced_.csv', conc, fmt='%0.8f', delimiter=',')   # X is an array
+np.savetxt('best_features_reduced_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_features, fmt='%0.8f', delimiter=',')
+np.savetxt('best_scores_reduced_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_train_test, fmt='%0.8f', delimiter=',')
+np.savetxt('worst_scores_reduced_'+str(worst_set[0])+'_'+str(worst_set[1])+'.csv', worst_train_test, fmt='%0.8f', delimiter=',')
+print 'feature set'
+print feature_set, '\n'
+print 'Worst set'
+print worst_set, '\n'
+
 
 # # feature extraction
 # fi_3 = regr_3.feature_importances_

@@ -47,7 +47,8 @@ SessID = SessID[SessID.columns[2]]
 Gender = Gender[Gender.columns[2]]
 Term_labels = Term_labels[Term_labels.columns[2]]
 
-features = pd.concat([T1, T2, Volume], axis = 1)
+features = pd.concat([T1, T2, Volume, SA ], axis = 1)
+print SA
 print features.shape
 
 training_data = []
@@ -55,14 +56,19 @@ testing_data = []
 training_labels = []
 testing_labels = []
 
+best_features = []
+raw_input('press ENTER')
 training_scores = np.zeros((5,3))
 training_accuracy = np.zeros((5,3))
 train_std = np.zeros((5,3))
 testing_scores = np.zeros((5,3))
 testing_accuracy = np.zeros((5,3))
 test_std = np.zeros((5,3))
+feature_set = ()
 
-rng = np.random.RandomState(1)
+rng = np.random.RandomState(42)
+
+last_cv = 0;
 
 N_est = [1, 10, 50, 100, 300]
 ts = [0.5, 0.7, 0.9]
@@ -70,8 +76,8 @@ i = 0
 j = 0
 for n in N_est:
     for t in ts :
-        training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=t, random_state=rng)
-        print 'train data : ', len(training_data), 'train lab : ', len(training_labels)
+        training_data, testing_data, training_labels, testing_labels = train_test_split(features, Gender, train_size=t, random_state=42)
+        # print 'train data : ', len(training_data), 'train lab : ', len(training_labels)
 
         clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=2),
                                   n_estimators=n, random_state=rng)
@@ -86,20 +92,25 @@ for n in N_est:
         training_scores[i][j] = sy
         testing_scores[i][j] = sz
 
-        print ' '
-        print 'Training scores --> n_est = %0.2f , ts = %0.2f : ' % (n, t), sy
-        print 'Testing scores --> n_est = %0.2f , ts = %0.2f: '% (n, t), sz
-        print ' '
+        # print ' '
+        # print 'Training scores --> n_est = %0.2f , ts = %0.2f : ' % (n, t), sy
+        # print 'Testing scores --> n_est = %0.2f , ts = %0.2f: '% (n, t), sz
+        # print ' '
 
         cv_test = (cross_val_score(clf, testing_data, testing_labels))
         cv_train = (cross_val_score(clf, training_data, training_labels))
 
-        print ' accuracy training: %0.2f (+/- %0.2f) ' % (cv_train.mean(), cv_train.std() *2)
-        print ' accuracy testing: %0.2f (+/- %0.2f) ' % (cv_test.mean(), cv_test.std() *2)
+        # print ' accuracy training: %0.2f (+/- %0.2f) ' % (cv_train.mean(), cv_train.std() *2)
+        # print ' accuracy testing: %0.2f (+/- %0.2f) ' % (cv_test.mean(), cv_test.std() *2)
         training_accuracy[i][j] = cv_train.mean()
         testing_accuracy[i][j] = cv_test.mean()
         train_std[i][j] = cv_train.std()
         test_std[i][j] = cv_test.std()
+
+        if cv_test.mean() > last_cv :
+            best_features = clf.feature_importances_
+            last_cv = cv_test.mean()
+            feature_set = (n,t)
         # print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         # print 'basic score : ', clf.score(testing_data, testing_labels)
         j+=1
@@ -109,15 +120,24 @@ for n in N_est:
     if i>4:
         i=0
 
-print 'training scores final'
-print training_scores
-print 'testing scores final'
-print testing_scores
-print 'training accuracy final'
-print training_accuracy
-print 'testing accuracy final'
-print testing_accuracy
-print 'training std'
-print train_std
-print 'testing std'
-print test_std
+
+zeros = np.zeros((5,1));
+conc = np.concatenate((training_scores, zeros, testing_scores, zeros, training_accuracy, zeros, testing_accuracy, zeros, train_std, zeros, test_std), axis = 1)
+np.savetxt('test.csv', conc, fmt='%0.8f', delimiter=',')   # X is an array
+np.savetxt('features.csv', best_features, fmt='%0.8f', delimiter=',')
+print 'feature set'
+print feature_set, '\n'
+# print 'conc'
+# print conc
+# print 'training scores final'
+# print training_scores
+# print 'testing scores final'
+# print testing_scores
+# print 'training accuracy final'
+# print training_accuracy
+# print 'testing accuracy final'
+# print testing_accuracy
+# print 'training std'
+# print train_std
+# print 'testing std'
+# print test_std
