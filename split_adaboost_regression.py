@@ -1,4 +1,4 @@
-#Adaboost regression
+#Adaboost regression split term/preterm training
 import pandas as pd
 import nibabel
 import os
@@ -10,27 +10,34 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
 
-# Max features = some sample from 87*3
-# max max_depth
-# n estimators
-
-path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
-T1 = pd.read_csv(path+'T1.csv')
-T2 = pd.read_csv(path+'T2.csv')
-Volume = pd.read_csv(path+'Volume.csv')
-BirthAge = pd.read_csv(path+'BirthGA.csv')
-ScanAge = pd.read_csv(path+'ScanGA.csv')
 
 
-T1 = T1[T1.columns[1:]]
-T2 = T2[T2.columns[1:]]
-Vol = Volume[Volume.columns[1:]]
-SA = ScanAge[ScanAge.columns[1]]
-BA = BirthAge[BirthAge.columns[1]]
-print BA
+path_term = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/split_data/Term_Data/"
+Term_data = pd.read_csv(path_term+'T1_T2_Vol.csv')
+BirthAge_term = pd.read_csv(path_term+'BirthGA.csv')
+ScanAge_term = pd.read_csv(path_term+'ScanGA.csv')
+
+t_data = Term_data[Term_data.columns[1:]]
+SA_t = ScanAge_term[ScanAge_term.columns[1]]
+BA_t = BirthAge_term[BirthAge_term.columns[1]]
+
+path_preterm = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/split_data/preterm_abov_37/"
+Preterm_data = pd.read_csv(path_preterm+'T1_T2_Vol.csv')
+BirthAge_pre = pd.read_csv(path_preterm+'BirthGA.csv')
+ScanAge_pre = pd.read_csv(path_preterm+'ScanGA.csv')
+
+p_data = Preterm_data[Preterm_data.columns[1:]]
+SA_p = ScanAge_pre[ScanAge_pre.columns[1]]
+BA_p = BirthAge_pre[BirthAge_pre.columns[1]]
+
 rng = np.random.RandomState(1)
-data = pd.concat([T1, T2, Vol], axis = 1)
-labels = BA
+training_data = pd.concat([t_data,SA_t], axis = 1)
+training_labels = BA_t
+
+raw_input('ENTER')
+
+testing_data = pd.concat([p_data,SA_p], axis=1)
+testing_labels = BA_p
 
 N_est = [1, 10, 50, 100, 300]
 ts = [0.5, 0.7, 0.9]
@@ -58,14 +65,13 @@ worst_train_test = []
 
 
 fig, ax = plt.subplots(5, 3)
+plt.title('Test plot')
 fig, axes = plt.subplots(5, 3)
 for n in N_est :
     for t in ts :
 
-        training_data, testing_data, training_labels, testing_labels = train_test_split(data, labels, train_size=t, random_state=42)
-        # Fit regression model
         regr = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-                                  n_estimators=n, random_state=rng)
+                                  n_estimators=n, random_state=42)
         regr.fit(training_data, training_labels)
 
         # Predict
@@ -93,6 +99,14 @@ for n in N_est :
         test_std[i][j] = scores_z.std()
 
         length_set = [len(training_labels)]
+        print 'length set: ', length_set
+        print 'length above: ', len(length_set)
+        print 'length train lab: ', len(training_labels)
+        print 'length y:', len(y)
+        print 'length test lab: ', len(testing_labels)
+        print 'length z: ', len(z)
+
+        raw_input('ENTER')
 
         if scores_z.mean() > last_cv :
             best_features = regr.feature_importances_
@@ -145,10 +159,10 @@ print test_std
 
 zeros = np.zeros((5,1));
 conc = np.concatenate((training_scores, zeros, testing_scores, zeros, training_accuracy, zeros, testing_accuracy, zeros, train_std, zeros, test_std), axis = 1)
-np.savetxt('all_scores_full_.csv', conc, fmt='%0.8f', delimiter=',')   # X is an array
-np.savetxt('best_features_full_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_features, fmt='%0.8f', delimiter=',')
-np.savetxt('best_scores_full_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_train_test, fmt='%0.8f', delimiter=',')
-np.savetxt('worst_scores_full_'+str(worst_set[0])+'_'+str(worst_set[1])+'.csv', worst_train_test, fmt='%0.8f', delimiter=',')
+np.savetxt('all_scores_split_SA.csv', conc, fmt='%0.8f', delimiter=',')   # X is an array
+np.savetxt('best_features_split_SA'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_features, fmt='%0.8f', delimiter=',')
+np.savetxt('best_scores_split_SA'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_train_test, fmt='%0.8f', delimiter=',')
+np.savetxt('worst_scores_split_SA'+str(worst_set[0])+'_'+str(worst_set[1])+'.csv', worst_train_test, fmt='%0.8f', delimiter=',')
 print 'feature set'
 print feature_set, '\n'
 print 'Worst set'
