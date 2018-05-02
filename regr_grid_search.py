@@ -15,7 +15,7 @@ from sklearn.model_selection import GridSearchCV
 # max max_depth
 # n estimators
 
-path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/"
+path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/split_data/term_preterm/"
 T1 = pd.read_csv(path+'T1.csv')
 T2 = pd.read_csv(path+'T2.csv')
 Volume = pd.read_csv(path+'Volume.csv')
@@ -26,7 +26,6 @@ T1 = T1[T1.columns[1:]]
 T2 = T2[T2.columns[1:]]
 Vol = Volume[Volume.columns[1:]]
 BA = BirthAge[BirthAge.columns[1]]
-print BA
 
 rnd = np.random.RandomState(42)
 X = pd.concat([T1, T2, Vol], axis = 1)
@@ -45,9 +44,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 # presort=False, random_state=None, splitter='best'
 
 # Set the parameters by cross-validation
-tuned_parameters = [{'learning_rate': [0.001, 0.01, 0.05, 0.1, 0.5, 0.9, 1],
-                        'loss': ['linear','square','exponential'],
-                        'n_estimators': [1,10,50,100,300,500,1000]}]
+tuned_parameters = [{'learning_rate': [0.05, 0.1, 0.5, 0.9, 1],
+                        'n_estimators': [1,10,50,100,300,500]}]
 
 
 scores = ['precision', 'recall']
