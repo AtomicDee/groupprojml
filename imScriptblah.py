@@ -19,16 +19,33 @@ T2w_names = glob.glob(os.path.join("Data",'*_T2w_restore_brain.nii.gz'))
 # print 'T1W files', T1w_names
 # print 'T2W files', T2w_names
 
+# Load GA data
+datainfo = pd.read_csv('DataInfo.csv')
+Byidname = datainfo.set_index("id")
+print 'all data : ', datainfo
+Id = datainfo.iloc[0:len(datainfo), 0]
+G = datainfo.iloc[0:len(datainfo), 1]
+GAbirth = datainfo.iloc[0:len(datainfo), 2]
+GAscan = datainfo.iloc[0:len(datainfo), 3]
+
+
 # Setting a limit to the number of iterations based on the number of patients
 lim = len(label_names)
 
 # Sampling the patient codes and samples for data separation
 pat_code = [0]*lim
+sub_code = [0]*lim
 for x in range(len(label_names)):
+<<<<<<< HEAD
     pat_code[x] = str(label_names[x][10:21])
+=======
+    pat_code[x] = str(label_names[x][25:31])
+    sub_code[x] = str(label_names[x][9:20])
+>>>>>>> 9efdc67bd8c51a995a9bca324782a6cd7b8a9f2d
 
 i = 0
-titles = ['Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+step = 0
+titles = ['scan ID','Gender','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
 df = []
 
 while i < lim:
@@ -37,6 +54,16 @@ while i < lim:
     Tissue_labels_file = os.path.join(label_names[i])
     T1w_restore_brain_file = os.path.join(T1w_names[i])
     T2w_restore_brain_file = os.path.join( T2w_names[i])
+    print 'sub_code : ', sub_code[i]
+
+    # load current data GA info
+    DI_current = datainfo[Id == sub_code[i]]
+    DI_current = DI_current.values.tolist()
+    GA_length = len(DI_current)
+    print 'Data for current patient:', DI_current
+    if GA_length == 1 :
+        step = 0
+        print 'step : ', step
 
     print ' '
     print 'Calculating for patient data: ', i+1
@@ -102,9 +129,19 @@ while i < lim:
         t2_avg_intensity = np.mean(t2_region)
 
         # Save all the data to a list
+        # titles = ['scan ID','Gender','Birth Age','GA','Region', 'T1 Average Intensity', 'T2 Average Intensity', 'Volume']
+        reduced_data.append([DI_current[step][0],DI_current[step][1],DI_current[step][2],DI_current[step][3],region,t1_avg_intensity, t2_avg_intensity, vol])
+    # Check if subject has had more than one scan, if so, increment step in order
+    # to append corresponding GA data for the further scans
+    if GA_length > 1 :
+        step += 1
+        print 'step : ', step
+    if (step+1) == GA_length :
+        step = 0
+        print 'step : ', step
 
-        reduced_data.append([region,t1_avg_intensity, t2_avg_intensity, vol])
     df.append(pd.DataFrame(reduced_data, columns = titles))
+
 
     # print 'Reduced Data : ', reduced_data
 
@@ -112,6 +149,7 @@ while i < lim:
 
 results = pd.concat(df, keys = pat_code)
 
-results.to_csv('drawem_all_labels.csv')
+results.to_csv('drawem_labels.csv')
 
 print results
+# https://github.com/MIRTK/DrawEM/blob/master/label_names/all_labels.csv
