@@ -1,3 +1,6 @@
+# Double checks that names of NIFTI files get split up correctly and match the strings when being loaded and saved
+# Use small lim for efficiency, if the first few match, the rest will too
+
 import os
 import sys
 import nibabel as nib

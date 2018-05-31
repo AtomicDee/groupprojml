@@ -1,4 +1,4 @@
-#Adaboost regression
+#Adaboost regression gridsearch function to obtain best parameters
 import pandas as pd
 import nibabel
 import os
@@ -43,7 +43,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # min_samples_split=2, min_weight_fraction_leaf=0.0,
 # presort=False, random_state=None, splitter='best'
 
-# Set the parameters by cross-validation
+# Set the parameters by cross-validation, add as many as you want from above
 tuned_parameters = [{'learning_rate': [0.05, 0.1, 0.5, 0.9, 1],
                         'n_estimators': [1,10,50,100,300,500]}]
 

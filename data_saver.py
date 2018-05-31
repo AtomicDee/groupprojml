@@ -1,3 +1,4 @@
+# Mapping features back to NIFTI images, saves as separate T1, T2 and VOL images
 import os
 import sys
 import nibabel as nib
@@ -76,7 +77,7 @@ raw_input('Press <ENTER> to continue')
 
 # for l in range(len(T1)):
 #     t1_region = T1[labels == region]
-
+#Create new arrays for T1, T2, and Vol features, using the shape of the corresponding original file
 t1_all = np.zeros((shape[0],shape[1],shape[2]), dtype=np.float32)
 t2_all = np.zeros((shape[0],shape[1],shape[2]), dtype=np.float32)
 vol_all = np.zeros((shape[0],shape[1],shape[2]), dtype=np.float32)
@@ -115,6 +116,7 @@ print t1_all.shape
 print t1_all.max()
 print 'saving'
 
+# apply afine from the corresponding image, save NIFTIs
 t1_img = nib.Nifti1Image(t1_all, affine)
 t1_filesave = str(pat_code[p])+'_'+str(sub_code[p])+'_t1_features.nii'
 t2_img = nib.Nifti1Image(t2_all, affine)
