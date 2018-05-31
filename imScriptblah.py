@@ -36,8 +36,15 @@ lim = len(label_names)
 pat_code = [0]*lim
 sub_code = [0]*lim
 for x in range(len(label_names)):
+<<<<<<< HEAD
+    pat_code[x] = str(label_names[x][10:21])
+=======
     pat_code[x] = str(label_names[x][25:31])
     sub_code[x] = str(label_names[x][9:20])
+<<<<<<< HEAD
+>>>>>>> 9efdc67bd8c51a995a9bca324782a6cd7b8a9f2d
+=======
+>>>>>>> 104e75907738d0a3f93fb881a5db97469158e5d2
 
 i = 0
 step = 0
