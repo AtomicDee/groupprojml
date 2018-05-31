@@ -43,7 +43,6 @@ testing_data = pd.concat([p_data,SA_p], axis=1)
 testing_labels = BA_p
 
 N_est = [1, 10, 50, 100, 300]
-ts = [0.5, 0.7, 0.9]
 md = [2, 4, 8]
 i = 0
 j = 0
@@ -74,6 +73,7 @@ fig, ax = plt.subplots(5, 3)
 plt.title('Test plot')
 fig, axes = plt.subplots(5, 3)
 for n in N_est :
+    # Can change any of these values for DTR
     # DecisionTreeRegressor(
     # criterion=mse, 'mae', 'friedman_mse'
     # splitter=best,
@@ -158,20 +158,20 @@ for n in N_est :
         i=0
 
 # plt.show()
-print 'best set'
-print best_set
-print 'training scores final'
-print training_scores
-print 'testing scores final'
-print testing_scores
-print 'training accuracy final'
-print training_accuracy
-print 'testing accuracy final'
-print testing_accuracy
-print 'training std'
-print train_std
-print 'testing std'
-print test_std
+# print 'best set'
+# print best_set
+# print 'training scores final'
+# print training_scores
+# print 'testing scores final'
+# print testing_scores
+# print 'training accuracy final'
+# print training_accuracy
+# print 'testing accuracy final'
+# print testing_accuracy
+# print 'training std'
+# print train_std
+# print 'testing std'
+# print test_std
 
 if best_set :
     zeros = np.zeros((5,1));
@@ -186,7 +186,7 @@ if best_set :
     print worst_set, '\n'
 
 
-# feature extraction
+# feature extraction, saving each type separately
 
 print len(best_features)
 
