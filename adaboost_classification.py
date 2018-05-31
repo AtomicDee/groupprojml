@@ -17,7 +17,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 # X, y = make_gaussian_quantiles(n_samples=1000, n_features=10,
 #                                n_classes=3, random_state=1)
-path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/split_data/term_preterm/"
+path = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/ALL_PATIENTS_NO_DUPLICATES/"
 path_save = "/Users/daria/Documents/Group diss/Group Project Data/csv_data/class_gen_red_results/"
 T1 = pd.read_csv(path+'T1.csv')
 print 'Shape T1 : ', T1.shape
@@ -37,15 +37,15 @@ Gender = pd.read_csv(path+'Gender.csv')
 print 'Shape Gender : ', Gender.shape
 Term_labels = pd.read_csv(path+'Term_labels.csv')
 
-T1 = T1[T1.columns[1:]]
-T2 = T2[T2.columns[1:]]
-Volume = Volume[Volume.columns[1:]]
-SA = ScanAge[ScanAge.columns[1]]
-BA = BirthAge[BirthAge.columns[1]]
-PatCode = PatCode[PatCode.columns[1]]
-SessID = SessID[SessID.columns[1]]
-Gender = Gender[Gender.columns[1]]
-Term_labels = Term_labels[Term_labels.columns[1]]
+T1 = T1[T1.columns[2:]]
+T2 = T2[T2.columns[2:]]
+Volume = Volume[Volume.columns[2:]]
+SA = ScanAge[ScanAge.columns[2]]
+BA = BirthAge[BirthAge.columns[2]]
+PatCode = PatCode[PatCode.columns[2]]
+SessID = SessID[SessID.columns[2]]
+Gender = Gender[Gender.columns[2]]
+Term_labels = Term_labels[Term_labels.columns[2]]
 
 features = pd.concat([T1, T2, Volume], axis = 1)
 
@@ -83,7 +83,7 @@ i = 0
 j = 0
 for n in N_est:
     for t in ts :
-        training_data, testing_data, training_labels, testing_labels = train_test_split(features, Gender, train_size=t, random_state=rng)
+        training_data, testing_data, training_labels, testing_labels = train_test_split(features, Term_labels, train_size=t, random_state=rng)
         # print 'train data : ', len(training_data), 'train lab : ', len(training_labels)
 
         clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=2, random_state=rng),
@@ -104,7 +104,7 @@ for n in N_est:
         # print 'Testing scores --> n_est = %0.2f , ts = %0.2f: '% (n, t), sz
         # print ' '
 
-        cv_test = (cross_val_score(clf, features, Gender, cv=5))
+        cv_test = (cross_val_score(clf, features, Term_labels, cv=5))
 
 
         # print ' accuracy training: %0.2f (+/- %0.2f) ' % (cv_train.mean(), cv_train.std() *2)
@@ -141,13 +141,13 @@ print testing_accuracy
 print 'testing std'
 print test_std
 
-zeros = np.zeros((5,1));
-conc = np.concatenate((training_scores, zeros, testing_scores, zeros, testing_accuracy, zeros, test_std), axis = 1)
-np.savetxt(path_save+'all_scores_gen_red_.csv', conc, fmt='%0.8f', delimiter=',')   # X is an array
-np.savetxt(path_save+'best_features_gen_red_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_features, fmt='%0.8f', delimiter=',')
-np.savetxt(path_save+'best_scores_gen_red_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_train_test, fmt='%s', delimiter=',')
-np.savetxt(path_save+'worst_scores_gen_red_'+str(worst_set[0])+'_'+str(worst_set[1])+'.csv', worst_train_test, fmt='%s', delimiter=',')
-# print 'conc'
+# zeros = np.zeros((5,1));
+# conc = np.concatenate((training_scores, zeros, testing_scores, zeros, testing_accuracy, zeros, test_std), axis = 1)
+# np.savetxt(path_save+'all_scores_gen_red_.csv', conc, fmt='%0.8f', delimiter=',')   # X is an array
+# np.savetxt(path_save+'best_features_gen_red_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_features, fmt='%0.8f', delimiter=',')
+# np.savetxt(path_save+'best_scores_gen_red_'+str(best_set[0])+'_'+str(best_set[1])+'.csv', best_train_test, fmt='%s', delimiter=',')
+# np.savetxt(path_save+'worst_scores_gen_red_'+str(worst_set[0])+'_'+str(worst_set[1])+'.csv', worst_train_test, fmt='%s', delimiter=',')
+# # print 'conc'
 # print conc
 # print 'training scores final'
 # print training_scores

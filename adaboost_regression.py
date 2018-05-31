@@ -75,7 +75,6 @@ for n in N_est :
         # Fit regression model
         regr = AdaBoostRegressor(DecisionTreeRegressor(max_depth=2, random_state=rnd),
                                   n_estimators=n, random_state=rnd, learning_rate=1)
-
         regr.fit(training_data, training_labels)
 
         # Predict
