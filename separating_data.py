@@ -9,6 +9,12 @@ import csv
 import sys
 <<<<<<< HEAD
 
+'''
+this code separates teh data (i.e. t1, t2, volume, patient data, etc.), and
+saves them separately - this was mainly used to have different csv files so that
+it didn't have to be separated everytime
+'''
+
 path = '/home/avi/Desktop/new_normalised_data.csv'
 data = pd.read_csv(path)
 # Using pandas to read all the data in

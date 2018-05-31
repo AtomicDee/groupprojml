@@ -8,6 +8,13 @@ import nibabel
 import csv
 import sys
 
+'''
+this code was used to merge the term and preterm data again, after the scans
+below 37 weeks, and duplicate scans were removed
+'''
+
+
+
 # path = '/home/avi/Desktop/new_data.csv'
 # path = '/home/avi/Desktop/Preterm.csv'
 # path = '/home/avi/Desktop/Term.csv'

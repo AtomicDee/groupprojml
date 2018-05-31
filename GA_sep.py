@@ -21,9 +21,11 @@ for row in data.itertuples():
         preterm.append(pd.DataFrame([row]))
     else:
         term.append(pd.DataFrame([row]))
+# remove any subject data below 37 weeks
 
 preterm = pd.concat(preterm)
 term = pd.concat(term)
 
 # preterm.to_csv('Preterm.csv')
 # term.to_csv('Term.csv')
+#save the new term/preterm data
